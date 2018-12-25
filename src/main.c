@@ -12,6 +12,7 @@ Cncl* readCncl(char*);
 void derivation(Cncl*, int);
 void freeCncl(Cncl *);
 void writeCncl(Cncl *, int);
+DBExp *copyDBExp(DBExp *);
 
 
 int main(int argc, char *argv[]){
@@ -27,14 +28,7 @@ int main(int argc, char *argv[]){
 #endif
 
 
-    /*
-    Val *result;
-    if(cncl_ob->cncl_type == INFR){
-        result = copyVal(cncl_ob->u.infr_->val_);
-    }else{
-        result = copyVal(cncl_ob->u.eval_->val_);
-    }
-    */
+    DBExp *result = copyDBExp(cncl_ob->dbexp_);
 
 
 #ifdef DEBUG

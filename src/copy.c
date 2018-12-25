@@ -1,7 +1,6 @@
 #include "param.h"
 #include <stdlib.h>
 #include <string.h>
-/*
 
 //#define DEBUG
 #ifdef DEBUG
@@ -10,10 +9,9 @@
 
 Int *copyInt(Int *);
 Bool *copyBool(Bool *);
-Clsr *copyClsr(Clsr *);
-ClsrRec *copyClsrRec(ClsrRec *);
-Env *copyEnv(Env *);
-Val *copyVal(Val *);
+
+VarList *copyVarList(VarList *);
+
 Var *copyVar(Var *);
 Op *copyOp(Op *);
 If *copyIf(If *);
@@ -22,6 +20,15 @@ Fun *copyFun(Fun *);
 App *copyApp(App *);
 LetRec *copyLetRec(LetRec *);
 Exp *copyExp(Exp *);
+
+DBVar *copyDBVar(DBVar *);
+DBOp *copyDBOp(DBOp *);
+DBIf *copyDBIf(DBIf *);
+DBLet *copyDBLet(DBLet *);
+DBFun *copyDBFun(DBFun *);
+DBApp *copyDBApp(DBApp *);
+DBLetRec *copyDBLetRec(DBLetRec *);
+DBExp *copyDBExp(DBExp *);
 
 
 Int *copyInt(Int *sample){
@@ -48,67 +55,16 @@ Bool *copyBool(Bool *sample){
     return ob;
 }
 
-Clsr *copyClsr(Clsr *sample){
-#ifdef DEBUG
-    printf("copyClsr start\n");
-#endif
-    Clsr *ob = (Clsr *)malloc(sizeof(Clsr));
-    ob->env_ = copyEnv(sample->env_);
-    ob->arg = copyVar(sample->arg);
-    ob->exp_ = copyExp(sample->exp_);
-#ifdef DEBUG
-    printf("copyClsr end\n");
-#endif
-    return ob;
-}
-
-ClsrRec *copyClsrRec(ClsrRec *sample){
-#ifdef DEBUG
-    printf("copyClsrRec start\n");
-#endif
-    ClsrRec *ob = (ClsrRec *)malloc(sizeof(ClsrRec));
-    ob->env_ = copyEnv(sample->env_);
-    ob->fun = copyVar(sample->fun);
-    ob->arg = copyVar(sample->arg);
-    ob->exp_ = copyExp(sample->exp_);
-#ifdef DEBUG
-    printf("copyClsrRec end\n");
-#endif
-    return ob;
-}
-
-Env *copyEnv(Env *sample){
+VarList *copyVarList(VarList *sample){
     if(sample==NULL)return NULL;
 #ifdef DEBUG
-    printf("copyEnv start\n");
+    printf("copyVarList start\n");
 #endif
-    Env *ob = (Env *)malloc(sizeof(Env));
+    VarList *ob = (VarList *)malloc(sizeof(VarList));
     ob->var_ = copyVar(sample->var_);
-    ob->val_ = copyVal(sample->val_);
-    ob->prev = copyEnv(sample->prev);
+    ob->prev = copyVarList(sample->prev);
 #ifdef DEBUG
-    printf("copyEnv end\n");
-#endif
-    return ob;
-}
-
-Val *copyVal(Val *sample){
-#ifdef DEBUG
-    printf("copyVal start\n");
-#endif
-    Val *ob = (Val *)malloc(sizeof(Val));
-    ob->val_type = sample->val_type;
-    if(ob->val_type==INT_){
-        ob->u.int_ = copyInt(sample->u.int_);
-    }else if(ob->val_type==BOOL_){
-        ob->u.bool_ = copyBool(sample->u.bool_);
-    }else if(ob->val_type==CLSR){
-        ob->u.clsr_ = copyClsr(sample->u.clsr_);
-    }else{
-        ob->u.clsrrec_ = copyClsrRec(sample->u.clsrrec_);
-    }
-#ifdef DEBUG
-    printf("copyVal end\n");
+    printf("copyVarList end\n");
 #endif
     return ob;
 }
@@ -122,6 +78,18 @@ Var *copyVar(Var *sample){
     strcpy(ob->var_name, sample->var_name);
 #ifdef DEBUG
     printf("copyVar end\n");
+#endif
+    return ob;
+};
+
+DBVar *copyDBVar(DBVar *sample){
+#ifdef DEBUG
+    printf("copyDBVar start\n");
+#endif
+    DBVar *ob = (DBVar *)malloc(sizeof(DBVar));
+    ob->n = sample->n;
+#ifdef DEBUG
+    printf("copyDBVar end\n");
 #endif
     return ob;
 };
@@ -140,6 +108,20 @@ Op *copyOp(Op *sample){
     return ob;
 }
 
+DBOp *copyDBOp(DBOp *sample){
+#ifdef DEBUG
+    printf("copyDBOp start\n");
+#endif
+    DBOp *ob = (DBOp *)malloc(sizeof(DBOp));
+    ob->op_type = sample->op_type;
+    ob->dbexp1_ = copyDBExp(sample->dbexp1_);
+    ob->dbexp2_ = copyDBExp(sample->dbexp2_);
+#ifdef DEBUG
+    printf("copyDBOp end\n");
+#endif
+    return ob;
+}
+
 If *copyIf(If *sample){
 #ifdef DEBUG
     printf("copyIf start\n");
@@ -150,6 +132,20 @@ If *copyIf(If *sample){
     ob->exp3_ = copyExp(sample->exp3_);
 #ifdef DEBUG
     printf("copyIf end\n");
+#endif
+    return ob;
+}
+
+DBIf *copyDBIf(DBIf *sample){
+#ifdef DEBUG
+    printf("copyDBIf start\n");
+#endif
+    DBIf *ob = (DBIf *)malloc(sizeof(DBIf));
+    ob->dbexp1_ = copyDBExp(sample->dbexp1_);
+    ob->dbexp2_ = copyDBExp(sample->dbexp2_);
+    ob->dbexp3_ = copyDBExp(sample->dbexp3_);
+#ifdef DEBUG
+    printf("copyDBIf end\n");
 #endif
     return ob;
 }
@@ -168,6 +164,19 @@ Let *copyLet(Let *sample){
     return ob;
 }
 
+DBLet *copyDBLet(DBLet *sample){
+#ifdef DEBUG
+    printf("copyDBLet start\n");
+#endif
+    DBLet *ob = (DBLet *)malloc(sizeof(DBLet));
+    ob->dbexp1_ = copyDBExp(sample->dbexp1_);
+    ob->dbexp2_ = copyDBExp(sample->dbexp2_);
+#ifdef DEBUG
+    printf("copyDBLet end\n");
+#endif
+    return ob;
+}
+
 Fun *copyFun(Fun *sample){
 #ifdef DEBUG
     printf("copyFun start\n");
@@ -177,6 +186,18 @@ Fun *copyFun(Fun *sample){
     ob->exp_ = copyExp(sample->exp_);
 #ifdef DEBUG
     printf("copyFun end\n");
+#endif
+    return ob;
+}
+
+DBFun *copyDBFun(DBFun *sample){
+#ifdef DEBUG
+    printf("copyDBFun start\n");
+#endif
+    DBFun *ob = (DBFun *)malloc(sizeof(DBFun));
+    ob->dbexp_ = copyDBExp(sample->dbexp_);
+#ifdef DEBUG
+    printf("copyDBFun end\n");
 #endif
     return ob;
 }
@@ -194,6 +215,19 @@ App *copyApp(App *sample){
     return ob;
 }
 
+DBApp *copyDBApp(DBApp *sample){
+#ifdef DEBUG
+    printf("copyDBApp start\n");
+#endif
+    DBApp *ob = (DBApp *)malloc(sizeof(DBApp));
+    ob->dbexp1_ = copyDBExp(sample->dbexp1_);
+    ob->dbexp2_ = copyDBExp(sample->dbexp2_);
+#ifdef DEBUG
+    printf("copyDBApp end\n");
+#endif
+    return ob;
+}
+
 LetRec *copyLetRec(LetRec *sample){
 #ifdef DEBUG
     printf("copyLetRec start\n");
@@ -205,6 +239,19 @@ LetRec *copyLetRec(LetRec *sample){
     ob->exp2_ = copyExp(sample->exp2_);
 #ifdef DEBUG
     printf("copyLetRec end\n");
+#endif
+    return ob;
+}
+
+DBLetRec *copyDBLetRec(DBLetRec *sample){
+#ifdef DEBUG
+    printf("copyDBLetRec start\n");
+#endif
+    DBLetRec *ob = (DBLetRec *)malloc(sizeof(DBLetRec));
+    ob->dbexp1_ = copyDBExp(sample->dbexp1_);
+    ob->dbexp2_ = copyDBExp(sample->dbexp2_);
+#ifdef DEBUG
+    printf("copyDBLetRec end\n");
 #endif
     return ob;
 }
@@ -229,4 +276,24 @@ Exp *copyExp(Exp *sample){
 #endif
     return ob;
 }
-*/
+
+DBExp *copyDBExp(DBExp *sample){
+#ifdef DEBUG
+    printf("copyDBExp start\n");
+#endif
+    DBExp *ob = (DBExp *)malloc(sizeof(DBExp));
+    ob->exp_type = sample->exp_type;
+    if(ob->exp_type==INT)ob->u.int_ = copyInt(sample->u.int_);
+    else if(ob->exp_type==BOOL)ob->u.bool_ = copyBool(sample->u.bool_);
+    else if(ob->exp_type==VAR)ob->u.dbvar_ = copyDBVar(sample->u.dbvar_);
+    else if(ob->exp_type==OP)ob->u.dbop_ = copyDBOp(sample->u.dbop_);
+    else if(ob->exp_type==IF)ob->u.dbif_ = copyDBIf(sample->u.dbif_);
+    else if(ob->exp_type==LET)ob->u.dblet_ = copyDBLet(sample->u.dblet_);
+    else if(ob->exp_type==FUN)ob->u.dbfun_ = copyDBFun(sample->u.dbfun_);
+    else if(ob->exp_type==APP)ob->u.dbapp_ = copyDBApp(sample->u.dbapp_);
+    else ob->u.dbletrec_ = copyDBLetRec(sample->u.dbletrec_);
+#ifdef DEBUG
+    printf("copyDBExp end\n");
+#endif
+    return ob;
+}
