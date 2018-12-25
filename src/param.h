@@ -1,14 +1,14 @@
-typedef enum{ //cncl type
+/*typedef enum{ //cncl type
     INFR,
     EVAL
-}CnclType;
+}CnclType;*/
 
-typedef enum{ //val type
+/*typedef enum{ //val type
     INT_,
     BOOL_,
     CLSR,
     CLSRREC
-}ValType;
+}ValType;*/
 
 typedef enum{ // exp type
     INT,
@@ -22,22 +22,20 @@ typedef enum{ // exp type
     LETREC
 }ExpType;
 
-typedef enum{ // infr type
+typedef enum{ // op type
     PLUS,
     MINUS,
     TIMES,
     LT
-}InfrOpType;
+}OpType;
 
+
+
+struct VarList_;
 
 struct Int_;
 struct Bool_;
-struct Clsr_;
-struct ClsrRec_;
 
-struct Env_;
-
-struct Val_;
 struct Var_;
 struct Op_;
 struct If_;
@@ -45,16 +43,26 @@ struct Let_;
 struct Fun_;
 struct App_;
 struct LetRec_;
+struct DBVar_;
+struct DBOp_;
+struct DBIf_;
+struct DBLet_;
+struct DBFun_;
+struct DBApp_;
+struct DBLetRec_;
 
 struct Exp_;
+struct DBExp_;
 
 struct Asmp_;
 
-struct Infr_;
-struct Eval_;
-
 struct Cncl_;
 
+
+typedef struct VarList_{
+    struct Var_ *var_;
+    struct VarList_ *prev;
+}VarList;
 
 typedef struct Int_{
     int i;
@@ -66,41 +74,12 @@ typedef struct Bool_{
 }Bool;
 
 
-typedef struct Clsr_{
-    struct Env_ *env_;
-    struct Var_ *arg;
-    struct Exp_ *exp_;
-}Clsr;
-
-typedef struct ClsrRec_{
-    struct Env_ *env_;
-    struct Var_ *fun;
-    struct Var_ *arg;
-    struct Exp_ *exp_;
-}ClsrRec;
-
-typedef struct Env_{
-    struct Var_ *var_;
-    struct Val_ *val_;
-    struct Env_ *prev;
-}Env;
-
-typedef struct Val_{
-    ValType val_type;
-    union{
-        struct Int_ *int_;
-        struct Bool_ *bool_;
-        struct Clsr_ *clsr_;
-        struct ClsrRec_ *clsrrec_;
-    }u;
-}Val;
-
 typedef struct Var_{
     char *var_name;
 }Var;
 
 typedef struct Op_{
-    InfrOpType op_type;
+    OpType op_type;
     struct Exp_ *exp1_;
     struct Exp_ *exp2_;
 }Op;
@@ -149,29 +128,65 @@ typedef struct Exp_{
     }u;
 }Exp;
 
+
+typedef struct DBVar_{
+    int n;
+}DBVar;
+
+typedef struct DBOp_{
+    OpType op_type;
+    struct DBExp_ *dbexp1_;
+    struct DBExp_ *dbexp2_;
+}DBOp;
+
+typedef struct DBIf_{
+    struct DBExp_ *dbexp1_;
+    struct DBExp_ *dbexp2_;
+    struct DBExp_ *dbexp3_;
+}DBIf;
+
+typedef struct DBLet_{
+    struct DBExp_ *dbexp1_;
+    struct DBExp_ *dbexp2_;
+}DBLet;
+
+typedef struct DBFun_{
+    struct DBExp_ *dbexp_;
+}DBFun;
+
+typedef struct DBApp_{
+    struct DBExp_ *dbexp1_;
+    struct DBExp_ *dbexp2_;
+}DBApp;
+
+typedef struct DBLetRec_{
+    struct DBExp_ *dbexp1_;
+    struct DBExp_ *dbexp2_;
+}DBLetRec;
+
+typedef struct DBExp_{
+    ExpType exp_type;
+    union{
+        struct Int_ *int_;
+        struct Bool_ *bool_;
+        struct DBVar_ *dbvar_;
+        struct DBOp_ *dbop_;
+        struct DBIf_ *dbif_;
+        struct DBLet_ *dblet_;
+        struct DBFun_ *dbfun_;
+        struct DBApp_ *dbapp_;
+        struct DBLetRec_ *dbletrec_;
+    }u;
+}DBExp;
+
 typedef struct Asmp_{
     struct Cncl_ *cncl_;
     struct Asmp_ *next;
 }Asmp;
 
-typedef struct Infr_{
-    InfrOpType infr_type;
-    int int1;
-    int int2;
-    struct Val_ *val_;
-}Infr;
-
-typedef struct Eval_{
-    struct Env_ *env_;
-    struct Exp_ *exp_;
-    struct Val_ *val_;
-}Eval;
-
 typedef struct Cncl_{
-    CnclType cncl_type;
     struct Asmp_ *asmp_;
-    union{
-        Infr *infr_;
-        Eval *eval_;
-    }u;
+    struct VarList_ *varlist_;
+    struct Exp_ *exp_;
+    struct DBExp_ *dbexp_;
 }Cncl;

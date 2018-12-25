@@ -1,12 +1,9 @@
 #include "param.h"
 #include <stdio.h>
-
+/*
 void writeInt(Int *);
 void writeBool(Bool *);
-void writeClsr(Clsr *);
-void writeClsrRec(ClsrRec *);
 void writeEnv(Env *);
-void writeVal(Val *);
 void writeVar(Var *);
 void writeOp(Op *);
 void writeIf(If *);
@@ -253,3 +250,4 @@ void writeCncl(Cncl *cncl_ob, int d){
     printf("}");
     return;
 }
+*/

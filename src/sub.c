@@ -19,6 +19,7 @@ void tree(int d){
     }
     return;
 }
+/*
 
 void writeRuleName(Cncl *cncl_ob){
     InfrOpType iot;
@@ -58,3 +59,4 @@ void writeRuleName(Cncl *cncl_ob){
     }
     return;
 }
+*/

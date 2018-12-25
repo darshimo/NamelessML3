@@ -3,7 +3,7 @@
 #include <string.h>
 #include <ctype.h>
 
-//#define DEBUG
+#define DEBUG
 
 #ifdef DEBUG
 #include <stdio.h>
@@ -12,15 +12,13 @@ void ind(int d);
 
 
 void error(char *);
-Val *copyVal(Val *);
 Var *copyVar(Var *);
+
+VarList *readVarList(char *);
 
 Int *readInt(char *);
 Bool *readBool(char *);
-Clsr *readClsr(char *, char *);
-ClsrRec *readClsrRec(char *, char *);
-Env *readEnv(char *);
-Val *readVal(char *);
+
 Var *readVar(char *);
 If *readIf(char *);
 Op *readOp(char *);
@@ -29,8 +27,16 @@ Fun *readFun(char *);
 App *readApp(char *);
 LetRec *readLetRec(char *);
 Exp *readExp(char *);
-Infr *readInfr(char *);
-Eval *readEval(char *);
+
+DBVar *readDBVar(char *);
+DBIf *readDBIf(char *);
+DBOp *readDBOp(char *);
+DBLet *readDBLet(char *);
+DBFun *readDBFun(char *);
+DBApp *readDBApp(char *);
+DBLetRec *readDBLetRec(char *);
+DBExp *readDBExp(char *);
+
 Cncl *readCncl(char *);
 
 
@@ -55,173 +61,33 @@ Bool *readBool(char *str){
 }
 
 
-Clsr *readClsr(char *str1, char *str2){
-#ifdef DEBUG
-    printf("clsr : (%s)[%s]\n",str1,str2);
-#endif
-    Clsr *clsr_ob = (Clsr *)malloc(sizeof(Clsr));
-    clsr_ob->env_ = readEnv(str1);
-    char *tmp;
-    str2 += strcspn(str2," ");
-    str2 += strspn(str2," ");
-    tmp = str2;
-    str2 += strcspn(str2," ");
-    str2 += strspn(str2," ");
-    str2 += strcspn(str2," ");
-    str2 += strspn(str2," ");
-    *(tmp+strcspn(tmp," "))='\0';
-
-    clsr_ob->arg = (Var *)malloc(sizeof(Var));
-    clsr_ob->arg->var_name = (char *)malloc(sizeof(char)*(strlen(tmp)+1));
-    strcpy(clsr_ob->arg->var_name,tmp);
-    clsr_ob->exp_ = readExp(str2);
-    return clsr_ob;
-}
-
-
-ClsrRec *readClsrRec(char *str1, char *str2){
-#ifdef DEBUG
-    printf("clserec : (%s)[%s]\n",str1,str2);
-#endif
-    ClsrRec *clsrrec_ob = (ClsrRec *)malloc(sizeof(ClsrRec));
-    clsrrec_ob->env_ = readEnv(str1);
-
-    char *tmp1, *tmp2;
-    str2 += strcspn(str2," ");
-    str2 += strspn(str2," ");
-    tmp1 = str2;
-    str2 += strcspn(str2," ");
-    str2 += strspn(str2," ");
-    str2 += strcspn(str2," ");
-    str2 += strspn(str2," ");
-    str2 += strcspn(str2," ");
-    str2 += strspn(str2," ");
-    tmp2 = str2;
-    str2 += strcspn(str2," ");
-    str2 += strspn(str2," ");
-    str2 += strcspn(str2," ");
-    str2 += strspn(str2," ");
-    *(tmp1+strcspn(tmp1," "))='\0';
-    *(tmp2+strcspn(tmp2," "))='\0';
-
-    clsrrec_ob->fun = (Var *)malloc(sizeof(Var));
-    clsrrec_ob->fun->var_name = (char *)malloc(sizeof(char)*(strlen(tmp1)+1));
-    strcpy(clsrrec_ob->fun->var_name,tmp1);
-    clsrrec_ob->arg = (Var *)malloc(sizeof(Var));
-    clsrrec_ob->arg->var_name = (char *)malloc(sizeof(char)*(strlen(tmp2)+1));
-    strcpy(clsrrec_ob->arg->var_name,tmp2);
-    clsrrec_ob->exp_ = readExp(str2);
-
-    return clsrrec_ob;
-}
-
-
-Env *readEnv(char *str){
+VarList *readVarList(char *str){
     if(*str=='\0')return NULL;
 
-    Env *env_ob = (Env *)malloc(sizeof(Env));
+    VarList *varlist_ob = (VarList *)malloc(sizeof(VarList));
 
-    Env *env_tmp = NULL;
+    VarList *varlist_tmp = NULL;
 
-    char *tmp1 = str;
-    str = NULL;
-    char *tmp2 = tmp1;
-
-    int count = 0;
-    while(1){
-        tmp2 += strcspn(tmp2,"(),");
-        if(*tmp2=='('){
-            count++;
-        }else if(*tmp2==')'){
-            count--;
-        }else if(*tmp2==','){
-            if(count==0){
-                str = tmp2;
-            }
-        }else{
-            break;
-        }
-        tmp2++;
-    }
+    char *tmp = str;
+    str = strrchr(tmp,',');
 
     if(str==NULL){
-        str = tmp1;
+        str = tmp;
     }else{
         *str = '\0';
         str++;
         str+=strspn(str," ");
-        env_tmp = readEnv(tmp1);
-    }
-    //char *str1 = strtok(str,"=");
-    //char *str2 = strtok(NULL,"=");
-    char *str1 = str;
-    char *str2 = strchr(str1,'=');
-    *str2 = '\0';
-    str2++;
-    str2+=strspn(str2," ");
-
-#ifdef DEBUG
-    printf("env : %s,%s\n",str1,str2);
-#endif
-
-    env_ob->var_ = readVar(str1);
-    env_ob->val_ = readVal(str2);
-    env_ob->prev = env_tmp;
-
-    return env_ob;
-}
-
-
-Val *readVal(char* str){
-#ifdef DEBUG
-    printf("val : %s\n",str);
-#endif
-    Val *val_ob = (Val *)malloc(sizeof(Val));
-
-    if(str[0]=='t'||str[0]=='f'){
-        val_ob->val_type = BOOL_;
-        val_ob->u.bool_ = readBool(str);
-    }else if(47<str[0]&&str[0]<58){
-        val_ob->val_type = INT_;
-        val_ob->u.int_ = readInt(str);
-    }else if(str[0]=='('){
-        char *str1, *str2;
-        str++;
-        str1 = str;
-        int count = 0;
-        while(1){
-            str+=strcspn(str,"()");
-            if(*str=='('){
-                count++;
-            }else if(*str==')'){
-                if(count==0){
-                    break;
-                }
-                count--;
-            }else{
-                error("1mismatch parentheses.");
-            }
-            str++;
-        }
-        *str = '\0';
-        str+=2;
-        str+=strspn(str," ");
-        str2 = str;
-        *strrchr(str2,']') = '\0';
-        if(str2[0]=='f'){
-            val_ob->val_type = CLSR;
-            val_ob->u.clsr_ = readClsr(str1,str2);
-        }else if(str2[0]=='r'){
-            val_ob->val_type = CLSRREC;
-            val_ob->u.clsrrec_ = readClsrRec(str1,str2);
-        }else{
-            error("val is not correct\n");
-        }
-    }else{
-        error("val is not correct\n");
+        varlist_tmp = readVarList(tmp);
     }
 
-    return val_ob;
+#ifdef DEBUG
+    printf("varlist : %s\n",str);
+#endif
+
+    varlist_ob->var_ = readVar(str);
+    varlist_ob->prev = varlist_tmp;
+
+    return varlist_ob;
 }
 
 
@@ -234,6 +100,17 @@ Var *readVar(char *str){
     var_ob->var_name = (char *)malloc(sizeof(char)*(strlen(str)+1));
     strcpy(var_ob->var_name,str);
     return var_ob;
+}
+
+DBVar *readDBVar(char *str){
+#ifdef DEBUG
+    printf("dbvar : %s\n",str);
+#endif
+    DBVar *dbvar_ob = (DBVar *)malloc(sizeof(DBVar));
+    str++;
+    *(str+strcspn(str," "))='\0';
+    dbvar_ob->n = atoi(str);
+    return dbvar_ob;
 }
 
 
@@ -290,6 +167,61 @@ If *readIf(char *str){
     if_ob->exp3_ = readExp(str3);
 
     return if_ob;
+}
+
+DBIf *readDBIf(char *str){
+#ifdef DEBUG
+    printf("dbif  : %s\n",str);
+#endif
+    DBIf *dbif_ob = (DBIf *)malloc(sizeof(DBIf));
+
+    int count = 0;
+    char *str1,*str2,*str3;
+    str+=strcspn(str," ");
+    str+=strspn(str," ");
+    str1 = str;
+    while(*str!='\0'){
+        if(strncmp(str-1," if ", 4)==0){
+            count++;
+        }else if(strncmp(str-1," then ",6)==0){
+            if(count){
+                count--;
+            }else{
+                *str = '\0';
+                str++;
+                break;
+            }
+        }
+        str+=strcspn(str," ");
+        str+=strspn(str," ");
+    }
+    str+=strcspn(str," ");
+    str+=strspn(str," ");
+    str2 = str;
+    while(*str!='\0'){
+        if(strncmp(str-1," if ",4)==0){
+            count++;
+        }else if(strncmp(str-1," else ",6)==0){
+            if(count){
+                count--;
+            }else{
+                *str = '\0';
+                str++;
+                break;
+            }
+        }
+        str+=strcspn(str," ");
+        str+=strspn(str," ");
+    }
+    str+=strcspn(str," ");
+    str+=strspn(str," ");
+    str3 = str;
+
+    dbif_ob->dbexp1_ = readDBExp(str1);
+    dbif_ob->dbexp2_ = readDBExp(str2);
+    dbif_ob->dbexp3_ = readDBExp(str3);
+
+    return dbif_ob;
 }
 
 
@@ -349,6 +281,62 @@ Op *readOp(char* str){
     return op_ob;
 }
 
+DBOp *readDBOp(char* str){
+#ifdef DEBUG
+    printf("dbop  : %s\n",str);
+#endif
+    DBOp *dbop_ob = (DBOp *)malloc(sizeof(DBOp));
+
+    int count = 0;
+    dbop_ob->op_type = TIMES;
+    char *str1, *str2;
+    str1 = str;
+    str2 = NULL;
+    while(1){
+        str += strcspn(str,"(+-*<)il");
+        if(str[0]=='('){
+            count++;
+        }else if(str[0]==')'){
+            count--;
+        }else if(count==0){
+            if(strncmp(str-1," if ",4)*strncmp(str-1," let ",5)==0){
+                break;
+            }else if(strncmp(str-1," + ",3)==0){
+                dbop_ob->op_type=PLUS;
+                str2 = str;
+            }else if(strncmp(str-1," - ",3)==0){
+                if(str==str1){
+                    str++;
+                    continue;
+                }
+                dbop_ob->op_type=MINUS;
+                str2 = str;
+            }else if(strncmp(str-1," < ",3)==0){
+                dbop_ob->op_type=LT;
+                str2 = str;
+                break;
+            }else if(strncmp(str-1," * ",3)==0){
+                if(dbop_ob->op_type==TIMES){
+                    str2 = str;
+                }
+            }else if(*str=='\0'){
+                break;
+            }
+        }
+        str++;
+    }
+
+    if(str2==NULL)error("invalid.");
+
+    *str2 = '\0';
+    str2++;
+    str2 += strspn(str2," ");
+    dbop_ob->dbexp1_ = readDBExp(str1);
+    dbop_ob->dbexp2_ = readDBExp(str2);
+
+    return dbop_ob;
+}
+
 
 Let *readLet(char *str){
 #ifdef DEBUG
@@ -396,6 +384,49 @@ Let *readLet(char *str){
 }
 
 
+DBLet *readDBLet(char *str){
+#ifdef DEBUG
+    printf("dblet : %s\n",str);
+#endif
+    DBLet *dblet_ob = (DBLet *)malloc(sizeof(DBLet));
+
+    char *str1, *str2;
+
+    str1 = str;
+    for(int i=0;i<3;i++){
+        str1 += strcspn(str1," ");
+        str1 += strspn(str1," ");
+    }
+    str2 = str1;
+
+    int count = 0;
+    while(1){
+        str2+=strcspn(str2,"li");
+        if(strncmp(str2-1," let ",5)==0){
+            count++;
+        }else if(strncmp(str2-1," in ",4)==0){
+            if(count==0){
+                break;
+            }
+            count--;
+        }else if(*str2=='\0'){
+            error("2mismatch let and in.");
+        }
+        str2++;
+    }
+
+    *str2 = '\0';
+    str2++;
+    str2 += strcspn(str2," ");
+    str2 += strspn(str2," ");
+
+    dblet_ob->dbexp1_ = readDBExp(str1);
+    dblet_ob->dbexp2_ = readDBExp(str2);
+
+    return dblet_ob;
+}
+
+
 Fun *readFun(char *str){
 #ifdef DEBUG
     printf("fun : %s\n",str);
@@ -417,6 +448,25 @@ Fun *readFun(char *str){
     fun_ob->exp_ = readExp(str);
 
     return fun_ob;
+}
+
+
+DBFun *readDBFun(char *str){
+#ifdef DEBUG
+    printf("dbfun : %s\n",str);
+#endif
+    DBFun *dbfun_ob = (DBFun *)malloc(sizeof(DBFun));
+
+    str += strcspn(str," ");
+    str += strspn(str," ");
+    str += strcspn(str," ");
+    str += strspn(str," ");
+    str += strcspn(str," ");
+    str += strspn(str," ");
+
+    dbfun_ob->dbexp_ = readDBExp(str);
+
+    return dbfun_ob;
 }
 
 
@@ -466,6 +516,55 @@ App *readApp(char *str){
     app_ob->exp1_ = readExp(str1);
     app_ob->exp2_ = readExp(str2);
     return app_ob;
+}
+
+
+DBApp *readDBApp(char *str){
+#ifdef DEBUG
+    printf("dbapp : %s\n",str);
+#endif
+    DBApp *dbapp_ob = (DBApp *)malloc(sizeof(DBApp));
+    char *str1 = str;
+    char *str2 = NULL;
+    int count;
+
+    while(1){
+        if(*str=='('){
+            count = 0;
+            str++;
+            while(1){
+                str+=strcspn(str,"()");
+                if(*str=='('){
+                    count++;
+                }else if(*str==')'){
+                    if(count==0){
+                        break;
+                    }
+                    count--;
+                }else{
+                    error("3mismatch parentheses.");
+                }
+                str++;
+            }
+            str++;
+        }else{
+            str+=strcspn(str," ");
+        }
+        str+=strspn(str," ");
+        if(*str=='\0'){
+            break;
+        }else{
+            str2 = str;
+        }
+    }
+
+    if(str2==NULL)error("sole dbapp.");
+
+    *(str2-1)='\0';
+
+    dbapp_ob->dbexp1_ = readDBExp(str1);
+    dbapp_ob->dbexp2_ = readDBExp(str2);
+    return dbapp_ob;
 }
 
 
@@ -525,6 +624,47 @@ LetRec *readLetRec(char *str){
     letrec_ob->exp2_ = readExp(str);
 
     return letrec_ob;
+}
+
+
+DBLetRec *readDBLetRec(char *str){
+#ifdef DEBUG
+    printf("dbletrec : %s\n",str);
+#endif
+    DBLetRec *dbletrec_ob = (DBLetRec *)malloc(sizeof(DBLetRec));
+    char *str1, *str2;
+    str1 = str;
+    for(int i = 0;i<7;i++){
+        str1 += strcspn(str1," ");
+        str1 += strspn(str1," ");
+    }
+    str2 = str1;
+
+    int count = 0;
+    while(1){
+        str2+=strcspn(str2,"li");
+        if(strncmp(str2-1," let ",5)==0){
+            count++;
+        }else if(strncmp(str2-1," in ",4)==0){
+            if(count==0){
+                break;
+            }
+            count--;
+        }else if(*str2=='\0'){
+            error("4mismatch let and in.");
+        }
+        str2++;
+    }
+
+    *str2 = '\0';
+    str2++;
+    str2 += strcspn(str2," ");
+    str2 += strspn(str2," ");
+
+    dbletrec_ob->dbexp1_ = readDBExp(str1);
+    dbletrec_ob->dbexp2_ = readDBExp(str2);
+
+    return dbletrec_ob;
 }
 
 
@@ -627,63 +767,102 @@ Exp *readExp(char* str){
 }
 
 
-Eval *readEval(char* str){
-#ifdef DEBUG
-    printf("eval: %s\n",str);
-#endif
-    Eval *eval_ob = (Eval *)malloc(sizeof(Eval));
+DBExp *readDBExp(char* str){
 
-    char *str1, *str2, *str3;
-    str1 = str;
-    str2 = strstr(str1,"|-");
-    *str2 = '\0';
-    str2+=2;
-    str2+=strspn(str2," ");
-    str3 = strstr(str2," evalto ");
-    *str3 = '\0';
-    str3+=8;
-    str3+=strspn(str3," ");
-
-    eval_ob->env_ = readEnv(str1);
-    eval_ob->exp_ = readExp(str2);
-    eval_ob->val_ = readVal(str3);
-
-    return eval_ob;
-}
-
-
-Infr *readInfr(char* str){
-#ifdef DEBUG
-    printf("infr: %s\n",str);
-#endif
-    Infr *infr_ob = (Infr *)malloc(sizeof(Infr));
-
-    char *tp;
-
-    tp = strtok(str," ");
-    infr_ob->int1 = atoi(tp);
-
-    tp = strtok(NULL," ");
-    if(strcmp(tp,"plus")==0){
-        infr_ob->infr_type = PLUS;
-    }else if(strcmp(tp,"minus")==0){
-        infr_ob->infr_type = MINUS;
-    }else if(strcmp(tp,"times")==0){
-        infr_ob->infr_type = TIMES;
-    }else{
-        infr_ob->infr_type = LT;
-        tp = strtok(NULL," ");
+    if(str[0]=='('){
+        int count = 0;
+        char *tmp1, *tmp2;
+        tmp1 = str+1;
+        while(1){
+            tmp1+=strcspn(tmp1,"()");
+            if(*tmp1=='('){
+                count++;
+            }else if(*tmp1==')'){
+                if(count==0){
+                    break;
+                }
+                count--;
+            }else{
+                error("7mismatch parentheses.");
+            }
+            tmp1++;
+        }
+        if(*tmp1=='\0')error("8mismatch parentheses.");
+        tmp2=tmp1 + 1;
+        if(*(tmp2+strspn(tmp2," "))=='\0'){
+            str++;
+            *tmp1 = '\0';
+            return readDBExp(str);
+        }
     }
 
-    tp = strtok(NULL," ");
-    infr_ob->int2 = atoi(tp);
+#ifdef DEBUG
+    //printf("dbexp : %s\n",str);
+#endif
 
-    tp = strtok(NULL," ");
+    DBExp *dbexp_ob = (DBExp *)malloc(sizeof(DBExp));
 
-    tp = strtok(NULL," ");
-    infr_ob->val_ = readVal(tp);
+    if(strncmp(str,"let rec ",8)==0){//when exp is letrec
+        dbexp_ob->exp_type = LETREC;
+        dbexp_ob->u.dbletrec_ = readDBLetRec(str);
+    }else if(strncmp(str,"let ",4)==0){//when exp is let
+        dbexp_ob->exp_type = LET;
+        dbexp_ob->u.dblet_ = readDBLet(str);
+    }else if(strncmp(str,"fun ",4)==0){//when exp is fun
+        dbexp_ob->exp_type = FUN;
+        dbexp_ob->u.dbfun_ = readDBFun(str);
+    }else if(strncmp(str,"if ",3)==0){//when exp is if
+        dbexp_ob->exp_type = IF;
+        dbexp_ob->u.dbif_ = readDBIf(str);
+    }else if(strncmp(str,"true",4)*strncmp(str,"false",5)==0){//when exp is bool
+        dbexp_ob->exp_type = BOOL;
+        dbexp_ob->u.bool_ = readBool(str);
+    }else{
 
-    return infr_ob;
+        char *tmp;
+        tmp = str;
+        tmp += strspn(tmp,"0123456789");
+        tmp += strspn(tmp," ");
+        if(*tmp=='\0'){//when exp is int
+            dbexp_ob->exp_type = INT;
+            dbexp_ob->u.int_ = readInt(str);
+        }else{
+
+            tmp = str;
+            tmp += strcspn(tmp," ()+-*<");
+            tmp += strspn(tmp," ");
+            if(*tmp=='\0'){//when exp is var
+                dbexp_ob->exp_type = VAR;
+                dbexp_ob->u.dbvar_ = readDBVar(str);
+            }else{
+
+                tmp = str;
+                int count = 0;
+                while(1){
+                    tmp+=strcspn(tmp,"()+-*<");
+                    if(*tmp=='('){
+                        count++;
+                    }else if(*tmp==')'){
+                        count--;
+                    }else if(*tmp!='\0'){
+                        if(count==0)break;
+                    }else{
+                        break;
+                    }
+                    tmp++;
+                }
+                if(*tmp=='\0'){//when exp is app
+                    dbexp_ob->exp_type = APP;
+                    dbexp_ob->u.dbapp_ = readDBApp(str);
+                }else{//when exp is op
+                    dbexp_ob->exp_type = OP;
+                    dbexp_ob->u.dbop_ = readDBOp(str);
+                }
+            }
+        }
+    }
+
+    return dbexp_ob;
 }
 
 
@@ -691,16 +870,22 @@ Cncl *readCncl(char* str){
 #ifdef DEBUG
     printf("cncl: %s\n",str);
 #endif
-    Cncl* cncl_ob = (Cncl *)malloc(sizeof(Cncl));
+    Cncl *cncl_ob = (Cncl *)malloc(sizeof(Cncl));
 
-    str += strspn(str," ");
-    if(strstr(str," is ")==NULL){
-        cncl_ob->cncl_type = EVAL;
-        cncl_ob->u.eval_ = readEval(str);
-    }else{
-        cncl_ob->cncl_type = INFR;
-        cncl_ob->u.infr_ = readInfr(str);
-    }
+    char *str1, *str2, *str3;
+    str1 = str;
+    str2 = strstr(str1,"|-");
+    *str2 = '\0';
+    str2+=2;
+    str2+=strspn(str2," ");
+    str3 = strstr(str2," ==> ");
+    *str3 = '\0';
+    str3+=5;
+    str3+=strspn(str3," ");
+
+    cncl_ob->varlist_ = readVarList(str1);
+    cncl_ob->exp_ = readExp(str2);
+    cncl_ob->dbexp_ = readDBExp(str3);
 
     return cncl_ob;
 }

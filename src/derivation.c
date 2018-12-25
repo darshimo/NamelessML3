@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+/*
 
 //#define DEBUG
 
@@ -484,3 +485,4 @@ void derivation(Cncl *cncl_ob, int d){
     }
     return;
 }
+*/

@@ -1,12 +1,11 @@
 #include "param.h"
 #include <stdio.h>
 
+void debugVarList(VarList *, int);
+
 void debugInt(Int *, int);
 void debugBool(Bool *, int);
-void debugClsr(Clsr *, int);
-void debugClsrRec(ClsrRec *, int);
-void debugEnv(Env *, int);
-void debugVal(Val *, int);
+
 void debugVar(Var *, int);
 void debugOp(Op *, int);
 void debugIf(If *, int);
@@ -15,9 +14,18 @@ void debugFun(Fun *, int);
 void debugApp(App *, int);
 void debugLetRec(LetRec *, int);
 void debugExp(Exp *, int);
-void debugInfr(Infr *, int);
-void debugEval(Eval *, int);
+
+void debugDBVar(DBVar *, int);
+void debugDBOp(DBOp *, int);
+void debugDBIf(DBIf *, int);
+void debugDBLet(DBLet *, int);
+void debugDBFun(DBFun *, int);
+void debugDBApp(DBApp *, int);
+void debugDBLetRec(DBLetRec *, int);
+void debugDBExp(DBExp *, int);
+
 void debugCncl(Cncl *, int);
+
 void tree(int);
 
 
@@ -38,49 +46,14 @@ void debugBool(Bool *bool_ob, int d){
     return;
 }
 
-void debugClsr(Clsr *clsr_ob, int d){
-    tree(d);
-    printf("clsr\n");
-    debugEnv(clsr_ob->env_,d+1);
-    debugVar(clsr_ob->arg,d+1);
-    debugExp(clsr_ob->exp_,d+1);
-    return;
-}
-
-void debugClsrRec(ClsrRec *clsrrec_ob, int d){
-    tree(d);
-    printf("clsrrec\n");
-    debugEnv(clsrrec_ob->env_,d+1);
-    debugVar(clsrrec_ob->fun,d+1);
-    debugVar(clsrrec_ob->arg,d+1);
-    debugExp(clsrrec_ob->exp_,d+1);
-    return;
-}
-
-void debugEnv(Env *env_ob, int d){
-    if(env_ob==NULL){
+void debugVarList(VarList *varlist_ob, int d){
+    if(varlist_ob==NULL){
         tree(d);
-        printf("env\n");
+        printf("varlist\n");
         return;
     }
-    debugEnv(env_ob->prev,d);
-    debugVar(env_ob->var_,d+1);
-    debugVal(env_ob->val_,d+1);
-    return;
-};
-
-void debugVal(Val *val_ob, int d){
-    tree(d);
-    printf("val\n");
-    if(val_ob->val_type==INT_){
-        debugInt(val_ob->u.int_,d+1);
-    }else if(val_ob->val_type==BOOL_){
-        debugBool(val_ob->u.bool_,d+1);
-    }else if(val_ob->val_type==CLSR){
-        debugClsr(val_ob->u.clsr_,d+1);
-    }else{
-        debugClsrRec(val_ob->u.clsrrec_,d+1);
-    }
+    debugVarList(varlist_ob->prev,d);
+    debugVar(varlist_ob->var_,d+1);
     return;
 };
 
@@ -89,6 +62,14 @@ void debugVar(Var *var_ob, int d){
     printf("var\n");
     tree(d+1);
     printf("%s\n",var_ob->var_name);
+    return;
+}
+
+void debugDBVar(DBVar *dbvar_ob, int d){
+    tree(d);
+    printf("dbvar\n");
+    tree(d+1);
+    printf("#%d\n",dbvar_ob->n);
     return;
 }
 
@@ -103,12 +84,33 @@ void debugOp(Op *op_ob, int d){
     return;
 };
 
+void debugDBOp(DBOp *dbop_ob, int d){
+    tree(d);
+    if(dbop_ob->op_type==PLUS)printf("dbop(+)\n");
+    else if(dbop_ob->op_type==TIMES)printf("dbop(*)\n");
+    else if(dbop_ob->op_type==MINUS)printf("dbop(-)\n");
+    else printf("dbop(<)\n");
+    debugDBExp(dbop_ob->dbexp1_,d+1);
+    debugDBExp(dbop_ob->dbexp2_,d+1);
+    return;
+};
+
+
 void debugIf(If *if_ob, int d){
     tree(d);
     printf("if\n");
     debugExp(if_ob->exp1_,d+1);
     debugExp(if_ob->exp2_,d+1);
     debugExp(if_ob->exp3_,d+1);
+    return;
+};
+
+void debugDBIf(DBIf *dbif_ob, int d){
+    tree(d);
+    printf("dbif\n");
+    debugDBExp(dbif_ob->dbexp1_,d+1);
+    debugDBExp(dbif_ob->dbexp2_,d+1);
+    debugDBExp(dbif_ob->dbexp3_,d+1);
     return;
 };
 
@@ -121,11 +123,26 @@ void debugLet(Let *let_ob, int d){
     return;
 }
 
+void debugDBLet(DBLet *dblet_ob, int d){
+    tree(d);
+    printf("dblet\n");
+    debugDBExp(dblet_ob->dbexp1_,d+1);
+    debugDBExp(dblet_ob->dbexp2_,d+1);
+    return;
+}
+
 void debugFun(Fun *fun_ob, int d){
     tree(d);
     printf("fun\n");
     debugVar(fun_ob->arg,d+1);
     debugExp(fun_ob->exp_,d+1);
+    return;
+}
+
+void debugDBFun(DBFun *dbfun_ob, int d){
+    tree(d);
+    printf("dbfun\n");
+    debugDBExp(dbfun_ob->dbexp_,d+1);
     return;
 }
 
@@ -137,6 +154,14 @@ void debugApp(App *app_ob, int d){
     return;
 }
 
+void debugDBApp(DBApp *dbapp_ob, int d){
+    tree(d);
+    printf("dbapp\n");
+    debugDBExp(dbapp_ob->dbexp1_,d+1);
+    debugDBExp(dbapp_ob->dbexp2_,d+1);
+    return;
+}
+
 void debugLetRec(LetRec *letrec_ob, int d){
     tree(d);
     printf("letrec\n");
@@ -144,6 +169,14 @@ void debugLetRec(LetRec *letrec_ob, int d){
     debugVar(letrec_ob->arg,d+1);
     debugExp(letrec_ob->exp1_,d+1);
     debugExp(letrec_ob->exp2_,d+1);
+    return;
+}
+
+void debugDBLetRec(DBLetRec *dbletrec_ob, int d){
+    tree(d);
+    printf("dbletrec\n");
+    debugDBExp(dbletrec_ob->dbexp1_,d+1);
+    debugDBExp(dbletrec_ob->dbexp2_,d+1);
     return;
 }
 
@@ -172,29 +205,37 @@ void debugExp(Exp *exp_ob, int d){
     return;
 };
 
-void debugInfr(Infr *infr_ob, int d){
+void debugDBExp(DBExp *dbexp_ob, int d){
     tree(d);
-    printf("infr\n");
-    return;
-};
-
-void debugEval(Eval *eval_ob, int d){
-    tree(d);
-    printf("eval\n");
-
-    debugEnv(eval_ob->env_,d+1);
-    debugExp(eval_ob->exp_,d+1);
-    debugVal(eval_ob->val_,d+1);
+    printf("dbexp\n");
+    if(dbexp_ob->exp_type==INT){
+        debugInt(dbexp_ob->u.int_,d+1);
+    }else if(dbexp_ob->exp_type==BOOL){
+        debugBool(dbexp_ob->u.bool_,d+1);
+    }else if(dbexp_ob->exp_type==VAR){
+        debugDBVar(dbexp_ob->u.dbvar_,d+1);
+    }else if(dbexp_ob->exp_type==OP){
+        debugDBOp(dbexp_ob->u.dbop_,d+1);
+    }else if(dbexp_ob->exp_type==IF){
+        debugDBIf(dbexp_ob->u.dbif_,d+1);
+    }else if(dbexp_ob->exp_type==LET){
+        debugDBLet(dbexp_ob->u.dblet_,d+1);
+    }else if(dbexp_ob->exp_type==FUN){
+        debugDBFun(dbexp_ob->u.dbfun_,d+1);
+    }else if(dbexp_ob->exp_type==APP){
+        debugDBApp(dbexp_ob->u.dbapp_,d+1);
+    }else{
+        debugDBLetRec(dbexp_ob->u.dbletrec_,d+1);
+    }
     return;
 };
 
 void debugCncl(Cncl *cncl_ob,int d){
     tree(d);
     printf("cncl\n");
-    if(cncl_ob->cncl_type==INFR){
-        debugInfr(cncl_ob->u.infr_,d+1);
-    }else{
-        debugEval(cncl_ob->u.eval_,d+1);
-    }
+
+    debugVarList(cncl_ob->varlist_,d+1);
+    debugExp(cncl_ob->exp_,d+1);
+    debugDBExp(cncl_ob->dbexp_,d+1);
     return;
 }

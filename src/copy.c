@@ -1,6 +1,7 @@
 #include "param.h"
 #include <stdlib.h>
 #include <string.h>
+/*
 
 //#define DEBUG
 #ifdef DEBUG
@@ -228,3 +229,4 @@ Exp *copyExp(Exp *sample){
 #endif
     return ob;
 }
+*/
