@@ -13,6 +13,7 @@ void derivation(Cncl*, int);
 void freeCncl(Cncl *);
 void writeCncl(Cncl *, int);
 DBExp *copyDBExp(DBExp *);
+int cmpDBExp(DBExp *,DBExp *);
 
 
 int main(int argc, char *argv[]){
@@ -52,11 +53,11 @@ int main(int argc, char *argv[]){
     printf("cmp ans start.\n");
 #endif
     if(cncl_ob->cncl_type == INFR){
-        if(cmpVal(cncl_ob->u.infr_->val_,result)){
+        if(cmp(cncl_ob->u.infr_->val_,result)){
             error("result is not correct.\n");
         }
     }else{
-        if(cmpVal(cncl_ob->u.eval_->val_,result)){
+        if(cmp(cncl_ob->u.eval_->val_,result)){
             error("result is not correct.\n");
         }
     }

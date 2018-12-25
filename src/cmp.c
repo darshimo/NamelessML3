@@ -1,36 +1,32 @@
 #include <string.h>
 #include "param.h"
-/*
+
+
+int cmpVar(Var *,Var *);
 
 int cmpInt(Int *,Int *);
 int cmpBool(Bool *,Bool *);
-int cmpClsr(Clsr *,Clsr *);
-int cmpClsrRec(ClsrRec *,ClsrRec *);
-int cmpEnv(Env *,Env *);
-int cmpVal(Val *,Val *);
-int cmpVar(Var *,Var *);
-int cmpOp(Op *,Op *);
-int cmpIf(If *,If *);
-int cmpLet(Let *,Let *);
-int cmpFun(Fun *,Fun *);
-int cmpApp(App *,App *);
-int cmpLetRec(LetRec *,LetRec *);
-int cmpExp(Exp *,Exp *);
+int cmpDBVar(DBVar *,DBVar *);
+int cmpDBOp(DBOp *,DBOp *);
+int cmpDBIf(DBIf *,DBIf *);
+int cmpDBLet(DBLet *,DBLet *);
+int cmpDBFun(DBFun *,DBFun *);
+int cmpDBApp(DBApp *,DBApp *);
+int cmpDBLetRec(DBLetRec *,DBLetRec *);
+int cmpDBExp(DBExp *,DBExp *);
 
-void writeInt(Int *);
-void writeBool(Bool *);
-void writeClsr(Clsr *);
-void writeClsrRec(ClsrRec *);
-void writeEnv(Env *);
-void writeVal(Val *);
-void writeVar(Var *);
-void writeOp(Op *);
-void writeIf(If *);
-void writeLet(Let *);
-void writeFun(Fun *);
-void writeApp(App *);
-void writeLetRec(LetRec *);
-void writeExp(Exp *);
+void writegVar(Var *);
+
+void writegInt(Int *);
+void writegBool(Bool *);
+void writegDBVar(DBVar *);
+void writegDBOp(DBOp *);
+void writegDBIf(DBIf *);
+void writegDBLet(DBLet *);
+void writegDBFun(DBFun *);
+void writegDBApp(DBApp *);
+void writegDBLetRec(DBLetRec *);
+void writegDBExp(DBExp *);
 
 
 //#define DEBUG
@@ -42,9 +38,9 @@ void writeExp(Exp *);
 int cmpInt(Int *ob1, Int *ob2){
 #ifdef DEBUG
     printf("cmpInt: ");
-    writeInt(ob1);
+    writegInt(ob1);
     printf(" : ");
-    writeInt(ob2);
+    writegInt(ob2);
     printf(" :\n");
 #endif
     return (ob1->i!=ob2->i);
@@ -53,170 +49,113 @@ int cmpInt(Int *ob1, Int *ob2){
 int cmpBool(Bool *ob1, Bool *ob2){
 #ifdef DEBUG
     printf("cmpBool: ");
-    writeBool(ob1);
+    writegBool(ob1);
     printf(" : ");
-    writeBool(ob2);
+    writegBool(ob2);
     printf(" :\n");
 #endif
     return (ob1->b!=ob2->b);
 }
 
-int cmpClsr(Clsr *ob1, Clsr *ob2){
+int cmpDBVar(DBVar *ob1, DBVar *ob2){
 #ifdef DEBUG
-    printf("cmpClsr: ");
-    writeClsr(ob1);
+    printf("cmpDBVar: ");
+    writegDBVar(ob1);
     printf(" : ");
-    writeClsr(ob2);
+    writegDBVar(ob2);
     printf(" :\n");
 #endif
-    if(cmpEnv(ob1->env_,ob2->env_))return 1;
-    if(cmpVar(ob1->arg,ob2->arg))return 1;
-    if(cmpExp(ob1->exp_,ob2->exp_))return 1;
-    return 0;
+    return ob1->n!=ob2->n;
 }
 
-int cmpClsrRec(ClsrRec *ob1, ClsrRec *ob2){
+int cmpDBOp(DBOp *ob1, DBOp *ob2){
 #ifdef DEBUG
-    printf("cmpClsrRec: ");
-    writeClsrRec(ob1);
+    printf("cmpDBOp: ");
+    writegDBOp(ob1);
     printf(" : ");
-    writeClsrRec(ob2);
-    printf(" :\n");
-#endif
-    if(cmpEnv(ob1->env_,ob2->env_))return 1;
-    if(cmpVar(ob1->fun,ob2->fun))return 1;
-    if(cmpVar(ob1->arg,ob2->arg))return 1;
-    if(cmpExp(ob1->exp_,ob2->exp_))return 1;
-    return 0;
-}
-
-int cmpEnv(Env *ob1, Env *ob2){
-#ifdef DEBUG
-    printf("cmpEnv: ");
-    writeEnv(ob1);
-    printf(" : ");
-    writeEnv(ob2);
-    printf(" :\n");
-#endif
-    if(ob1==NULL&&ob2==NULL)return 0;
-    if(cmpVar(ob1->var_,ob2->var_))return 1;
-    if(cmpVal(ob1->val_,ob2->val_))return 1;
-    if(cmpEnv(ob1->prev,ob2->prev))return 1;
-    return 0;
-}
-
-int cmpVal(Val *ob1, Val *ob2){
-    if(ob1->val_type!=ob2->val_type)return 1;
-    if(ob1->val_type==INT_)return cmpInt(ob1->u.int_,ob2->u.int_);
-    if(ob1->val_type==BOOL_)return cmpBool(ob1->u.bool_,ob2->u.bool_);
-    if(ob1->val_type==CLSR)return cmpClsr(ob1->u.clsr_,ob2->u.clsr_);
-    return cmpClsrRec(ob1->u.clsrrec_,ob2->u.clsrrec_);
-}
-
-int cmpVar(Var *ob1, Var *ob2){
-#ifdef DEBUG
-    printf("cmpVar: ");
-    writeVar(ob1);
-    printf(" : ");
-    writeVar(ob2);
-    printf(" :\n");
-#endif
-    return strcmp(ob1->var_name, ob2->var_name);
-}
-
-int cmpOp(Op *ob1, Op *ob2){
-#ifdef DEBUG
-    printf("cmpOp: ");
-    writeOp(ob1);
-    printf(" : ");
-    writeOp(ob2);
+    writegDBOp(ob2);
     printf(" :\n");
 #endif
     if(ob1->op_type!=ob2->op_type)return 1;
-    if(cmpExp(ob1->exp1_,ob2->exp1_))return 1;
-    if(cmpExp(ob1->exp2_,ob2->exp2_))return 1;
+    if(cmpDBExp(ob1->dbexp1_,ob2->dbexp1_))return 1;
+    if(cmpDBExp(ob1->dbexp2_,ob2->dbexp2_))return 1;
     return 0;
 }
 
-int cmpIf(If *ob1, If *ob2){
+int cmpDBIf(DBIf *ob1, DBIf *ob2){
 #ifdef DEBUG
-    printf("cmpIf: ");
-    writeIf(ob1);
+    printf("cmpDBIf: ");
+    writegDBIf(ob1);
     printf(" : ");
-    writeIf(ob2);
+    writegDBIf(ob2);
     printf(" :\n");
 #endif
-    if(cmpExp(ob1->exp1_,ob2->exp1_))return 1;
-    if(cmpExp(ob1->exp2_,ob2->exp2_))return 1;
-    if(cmpExp(ob1->exp3_,ob2->exp3_))return 1;
+    if(cmpDBExp(ob1->dbexp1_,ob2->dbexp1_))return 1;
+    if(cmpDBExp(ob1->dbexp2_,ob2->dbexp2_))return 1;
+    if(cmpDBExp(ob1->dbexp3_,ob2->dbexp3_))return 1;
     return 0;
 }
 
-int cmpLet(Let *ob1, Let *ob2){
+int cmpDBLet(DBLet *ob1, DBLet *ob2){
 #ifdef DEBUG
-    printf("cmpLet: ");
-    writeLet(ob1);
+    printf("cmpDBLet: ");
+    writegDBLet(ob1);
     printf(" : ");
-    writeLet(ob2);
+    writegDBLet(ob2);
     printf(" :\n");
 #endif
-    if(cmpVar(ob1->var_,ob2->var_))return 1;
-    if(cmpExp(ob1->exp1_,ob2->exp1_))return 1;
-    if(cmpExp(ob1->exp2_,ob2->exp2_))return 1;
+    if(cmpDBExp(ob1->dbexp1_,ob2->dbexp1_))return 1;
+    if(cmpDBExp(ob1->dbexp2_,ob2->dbexp2_))return 1;
     return 0;
 }
 
-int cmpFun(Fun *ob1, Fun *ob2){
+int cmpDBFun(DBFun *ob1, DBFun *ob2){
 #ifdef DEBUG
-    printf("cmpFun: ");
-    writeFun(ob1);
+    printf("cmpDBFun: ");
+    writegDBFun(ob1);
     printf(" : ");
-    writeFun(ob2);
+    writegDBFun(ob2);
     printf(" :\n");
 #endif
-    if(cmpVar(ob1->arg,ob2->arg))return 1;
-    if(cmpExp(ob1->exp_,ob2->exp_))return 1;
+    if(cmpDBExp(ob1->dbexp_,ob2->dbexp_))return 1;
     return 0;
 }
 
-int cmpApp(App *ob1, App *ob2){
+int cmpDBApp(DBApp *ob1, DBApp *ob2){
 #ifdef DEBUG
-    printf("cmpApp: ");
-    writeApp(ob1);
+    printf("cmpDBApp: ");
+    writegDBApp(ob1);
     printf(" : ");
-    writeApp(ob2);
+    writegDBApp(ob2);
     printf(" :\n");
 #endif
-    if(cmpExp(ob1->exp1_,ob2->exp1_))return 1;
-    if(cmpExp(ob1->exp2_,ob2->exp2_))return 1;
+    if(cmpDBExp(ob1->dbexp1_,ob2->dbexp1_))return 1;
+    if(cmpDBExp(ob1->dbexp2_,ob2->dbexp2_))return 1;
     return 0;
 }
 
-int cmpLetRec(LetRec *ob1, LetRec *ob2){
+int cmpDBLetRec(DBLetRec *ob1, DBLetRec *ob2){
 #ifdef DEBUG
-    printf("cmpLetRec: ");
-    writeLetRec(ob1);
+    printf("cmpDBLetRec: ");
+    writegDBLetRec(ob1);
     printf(" : ");
-    writeLetRec(ob2);
+    writegDBLetRec(ob2);
     printf(" :\n");
 #endif
-    if(cmpVar(ob1->fun,ob2->fun))return 1;
-    if(cmpVar(ob1->arg,ob2->arg))return 1;
-    if(cmpExp(ob1->exp1_,ob2->exp1_))return 1;
-    if(cmpExp(ob1->exp2_,ob2->exp2_))return 1;
+    if(cmpDBExp(ob1->dbexp1_,ob2->dbexp1_))return 1;
+    if(cmpDBExp(ob1->dbexp2_,ob2->dbexp2_))return 1;
     return 0;
 }
 
-int cmpExp(Exp *ob1, Exp *ob2){
+int cmpDBExp(DBExp *ob1, DBExp *ob2){
     if(ob1->exp_type!=ob2->exp_type)return 1;
     if(ob1->exp_type==INT)return cmpInt(ob1->u.int_,ob2->u.int_);
     if(ob1->exp_type==BOOL)return cmpBool(ob1->u.bool_,ob2->u.bool_);
-    if(ob1->exp_type==VAR)return cmpVar(ob1->u.var_,ob2->u.var_);
-    if(ob1->exp_type==OP)return cmpOp(ob1->u.op_,ob2->u.op_);
-    if(ob1->exp_type==IF)return cmpIf(ob1->u.if_,ob2->u.if_);
-    if(ob1->exp_type==LET)return cmpLet(ob1->u.let_,ob2->u.let_);
-    if(ob1->exp_type==FUN)return cmpFun(ob1->u.fun_,ob2->u.fun_);
-    if(ob1->exp_type==APP)return cmpApp(ob1->u.app_,ob2->u.app_);
-    return cmpLetRec(ob1->u.letrec_,ob2->u.letrec_);
+    if(ob1->exp_type==VAR)return cmpDBVar(ob1->u.dbvar_,ob2->u.dbvar_);
+    if(ob1->exp_type==OP)return cmpDBOp(ob1->u.dbop_,ob2->u.dbop_);
+    if(ob1->exp_type==IF)return cmpDBIf(ob1->u.dbif_,ob2->u.dbif_);
+    if(ob1->exp_type==LET)return cmpDBLet(ob1->u.dblet_,ob2->u.dblet_);
+    if(ob1->exp_type==FUN)return cmpDBFun(ob1->u.dbfun_,ob2->u.dbfun_);
+    if(ob1->exp_type==APP)return cmpDBApp(ob1->u.dbapp_,ob2->u.dbapp_);
+    return cmpDBLetRec(ob1->u.dbletrec_,ob2->u.dbletrec_);
 }
-*/
