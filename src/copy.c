@@ -5,6 +5,7 @@
 //#define DEBUG
 #ifdef DEBUG
 #include <stdio.h>
+void writeDBExp(DBExp *);
 #endif
 
 Int *copyInt(Int *);

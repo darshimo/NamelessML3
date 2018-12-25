@@ -1,7 +1,7 @@
 #include "param.h"
 #include <stdlib.h>
 
-#define DEBUG
+//#define DEBUG
 #ifdef DEBUG
 #include <stdio.h>
 void debugCncl(Cncl *,int);
@@ -18,6 +18,7 @@ int cmpDBExp(DBExp *,DBExp *);
 
 int main(int argc, char *argv[]){
     if(argc!=2)error("arg is not correct.\n");
+
 
 
 #ifdef DEBUG
@@ -39,7 +40,6 @@ int main(int argc, char *argv[]){
 #endif
 
 
-    /*
 #ifdef DEBUG
     printf("derivation start.\n");
 #endif
@@ -52,14 +52,8 @@ int main(int argc, char *argv[]){
 #ifdef DEBUG
     printf("cmp ans start.\n");
 #endif
-    if(cncl_ob->cncl_type == INFR){
-        if(cmp(cncl_ob->u.infr_->val_,result)){
-            error("result is not correct.\n");
-        }
-    }else{
-        if(cmp(cncl_ob->u.eval_->val_,result)){
-            error("result is not correct.\n");
-        }
+    if(cmpDBExp(cncl_ob->dbexp_,result)){
+        error("result is not correct.\n");
     }
 #ifdef DEBUG
     printf("cmp ans clmplete.\n");
@@ -73,6 +67,8 @@ int main(int argc, char *argv[]){
 #ifdef DEBUG
     printf("write complete.\n");
 #endif
+
+    /*
 
 #ifdef DEBUG
     printf("free start.\n");

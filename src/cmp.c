@@ -1,6 +1,7 @@
 #include <string.h>
 #include "param.h"
 
+//#define DEBUG
 
 int cmpVar(Var *,Var *);
 
@@ -29,11 +30,14 @@ void writeDBLetRec(DBLetRec *);
 void writeDBExp(DBExp *);
 
 
-#define DEBUG
 #ifdef DEBUG
 #include <stdio.h>
 #endif
 
+
+int cmpVar(Var *ob1, Var *ob2){
+    return strcmp(ob1->var_name, ob2->var_name);
+}
 
 int cmpInt(Int *ob1, Int *ob2){
 #ifdef DEBUG

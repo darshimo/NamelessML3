@@ -1,14 +1,18 @@
-/*typedef enum{ //cncl type
-    INFR,
-    EVAL
-}CnclType;*/
-
-/*typedef enum{ //val type
-    INT_,
-    BOOL_,
-    CLSR,
-    CLSRREC
-}ValType;*/
+typedef enum{
+    TR_INT,
+    TR_BOOL,
+    TR_IF,
+    TR_PLUS,
+    TR_MINUS,
+    TR_TIMES,
+    TR_LT,
+    TR_VAR1,
+    TR_VAR2,
+    TR_LET,
+    TR_FUN,
+    TR_APP,
+    TR_LETREC,
+}RuleType;
 
 typedef enum{ // exp type
     INT,
@@ -185,6 +189,7 @@ typedef struct Asmp_{
 }Asmp;
 
 typedef struct Cncl_{
+    RuleType rule_type;
     struct Asmp_ *asmp_;
     struct VarList_ *varlist_;
     struct Exp_ *exp_;

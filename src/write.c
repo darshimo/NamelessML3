@@ -309,12 +309,11 @@ void writeCncl(Cncl *cncl_ob, int d){
     if(cncl_ob->varlist_!=NULL)printf(" ");
     printf("|- ");
     writeExp(cncl_ob->exp_);
-    printf(" evalto ");
+    printf(" ==> ");
     writeDBExp(cncl_ob->dbexp_);
 
     printf(" by ");
-    //writeRuleName(cncl_ob);
-    printf("RuleName");
+    writeRuleName(cncl_ob);
     printf(" {");
     writeAsmp(cncl_ob->asmp_, d+1);
     if(cncl_ob->asmp_!=NULL)ind(d);

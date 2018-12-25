@@ -19,44 +19,20 @@ void tree(int d){
     }
     return;
 }
-/*
 
 void writeRuleName(Cncl *cncl_ob){
-    InfrOpType iot;
-    ExpType ep;
-    if(cncl_ob->cncl_type==INFR){
-        iot = cncl_ob->u.infr_->infr_type;
-        if(iot==PLUS)printf("B-Plus");
-        else if(iot==MINUS)printf("B-Minus");
-        else if(iot==TIMES)printf("B-Times");
-        else printf("B-Lt");
-    }else{
-        ep = cncl_ob->u.eval_->exp_->exp_type;
-        if(ep==INT)printf("E-Int");
-        else if(ep==BOOL)printf("E-Bool");
-        else if(ep==VAR){
-            if(cmpVar(cncl_ob->u.eval_->env_->var_,cncl_ob->u.eval_->exp_->u.var_)==0)printf("E-Var1");
-            else printf("E-Var2");
-        }
-        else if(ep==OP){
-            iot = cncl_ob->u.eval_->exp_->u.op_->op_type;
-            if(iot==PLUS)printf("E-Plus");
-            else if(iot==MINUS)printf("E-Minus");
-            else if(iot==TIMES)printf("E-Times");
-            else printf("E-Lt");
-        }
-        else if(ep==IF){
-            if(cncl_ob->asmp_->cncl_->u.eval_->val_->u.bool_->b)printf("E-IfT");
-            else printf("E-IfF");
-        }
-        else if(ep==LET)printf("E-Let");
-        else if(ep==FUN)printf("E-Fun");
-        else if(ep==APP){
-            if(cncl_ob->asmp_->cncl_->u.eval_->val_->val_type==CLSR)printf("E-App");
-            else printf("E-AppRec");
-        }
-        else printf("E-LetRec");
-    }
-    return;
+    RuleType tmp = cncl_ob->rule_type;
+    if(tmp==TR_INT)printf("Tr-Int");
+    else if(tmp==TR_INT)printf("Tr-Bool");
+    else if(tmp==TR_IF)printf("Tr-If");
+    else if(tmp==TR_PLUS)printf("Tr-Plus");
+    else if(tmp==TR_MINUS)printf("Tr-Minus");
+    else if(tmp==TR_TIMES)printf("Tr-Times");
+    else if(tmp==TR_LT)printf("Tr-Lt");
+    else if(tmp==TR_VAR1)printf("Tr-Var1");
+    else if(tmp==TR_VAR2)printf("Tr-Var2");
+    else if(tmp==TR_LET)printf("Tr-Let");
+    else if(tmp==TR_FUN)printf("Tr-Fun");
+    else if(tmp==TR_APP)printf("Tr-App");
+    else printf("Tr-LetRec");
 }
-*/
