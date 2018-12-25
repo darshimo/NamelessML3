@@ -1,9 +1,11 @@
 #include "param.h"
 #include <stdio.h>
-/*
+
+void writeVarList(VarList *);
+
 void writeInt(Int *);
 void writeBool(Bool *);
-void writeEnv(Env *);
+
 void writeVar(Var *);
 void writeOp(Op *);
 void writeIf(If *);
@@ -12,9 +14,17 @@ void writeFun(Fun *);
 void writeApp(App *);
 void writeLetRec(LetRec *);
 void writeExp(Exp *);
+
+void writeDBVar(DBVar *);
+void writeDBOp(DBOp *);
+void writeDBIf(DBIf *);
+void writeDBLet(DBLet *);
+void writeDBFun(DBFun *);
+void writeDBApp(DBApp *);
+void writeDBLetRec(DBLetRec *);
+void writeDBExp(DBExp *);
+
 void writeAsmp(Asmp *, int);
-void writeInfr(Infr *);
-void writeEval(Eval *);
 void writeCncl(Cncl *, int);
 
 void ind(int);
@@ -32,57 +42,23 @@ void writeBool(Bool *bool_ob){
     return;
 }
 
-void writeClsr(Clsr *clsr_ob){
-    printf("(");
-    writeEnv(clsr_ob->env_);
-    printf(")[fun ");
-    writeVar(clsr_ob->arg);
-    printf(" -> ");
-    writeExp(clsr_ob->exp_);
-    printf("]");
-    return;
-}
-
-void writeClsrRec(ClsrRec *clsrrec_ob){
-    printf("(");
-    writeEnv(clsrrec_ob->env_);
-    printf(")[rec ");
-    writeVar(clsrrec_ob->fun);
-    printf(" = fun ");
-    writeVar(clsrrec_ob->arg);
-    printf(" -> ");
-    writeExp(clsrrec_ob->exp_);
-    printf("]");
-    return;
-}
-
-void writeEnv(Env *env_ob){
-    if(env_ob==NULL)return;
-    if(env_ob->prev!=NULL){
-        writeEnv(env_ob->prev);
+void writeVarList(VarList *varlist_ob){
+    if(varlist_ob==NULL)return;
+    if(varlist_ob->prev!=NULL){
+        writeVarList(varlist_ob->prev);
         printf(", ");
     }
-    writeVar(env_ob->var_);
-    printf(" = ");
-    writeVal(env_ob->val_);
-    return;
-}
-
-void writeVal(Val *val_ob){
-    if(val_ob->val_type==INT_){
-        writeInt(val_ob->u.int_);
-    }else if(val_ob->val_type==BOOL_){
-        writeBool(val_ob->u.bool_);
-    }else if(val_ob->val_type==CLSR){
-        writeClsr(val_ob->u.clsr_);
-    }else{
-        writeClsrRec(val_ob->u.clsrrec_);
-    }
+    writeVar(varlist_ob->var_);
     return;
 }
 
 void writeVar(Var *var_ob){
     printf("%s",var_ob->var_name);
+    return;
+}
+
+void writeDBVar(DBVar *dbvar_ob){
+    printf("#%d",dbvar_ob->n);
     return;
 }
 
@@ -125,6 +101,45 @@ void writeOp(Op *op_ob){
     return;
 }
 
+void writeDBOp(DBOp *dbop_ob){
+    char paren1 = 0;
+    char paren2 = 0;
+
+    if(dbop_ob->dbexp1_->exp_type==IF || dbop_ob->dbexp1_->exp_type==LET || dbop_ob->dbexp1_->exp_type==LETREC){
+        paren1 = 1;
+    }
+    if(dbop_ob->dbexp2_->exp_type==IF || dbop_ob->dbexp2_->exp_type==LET || dbop_ob->dbexp2_->exp_type==LETREC){
+        paren2 = 1;
+    }
+    if(dbop_ob->op_type==TIMES && dbop_ob->dbexp1_->exp_type==OP){
+        if(dbop_ob->dbexp1_->u.dbop_->op_type==PLUS || dbop_ob->dbexp1_->u.dbop_->op_type==MINUS){
+            paren1 = 1;
+        }
+    }
+    if(dbop_ob->op_type==TIMES && dbop_ob->dbexp2_->exp_type==OP){
+        if(dbop_ob->dbexp2_->u.dbop_->op_type==PLUS || dbop_ob->dbexp2_->u.dbop_->op_type==MINUS){
+            paren2 = 1;
+        }
+    }
+
+    if(paren1)printf("(");
+    writeDBExp(dbop_ob->dbexp1_);
+    if(paren1)printf(")");
+    if(dbop_ob->op_type==PLUS){
+        printf(" + ");
+    }else if(dbop_ob->op_type==TIMES){
+        printf(" * ");
+    }else if(dbop_ob->op_type==MINUS){
+        printf(" - ");
+    }else{
+        printf(" < ");
+    }
+    if(paren2)printf("(");
+    writeDBExp(dbop_ob->dbexp2_);
+    if(paren2)printf(")");
+    return;
+}
+
 void writeIf(If *if_ob){
     printf("if ");
     writeExp(if_ob->exp1_);
@@ -132,6 +147,16 @@ void writeIf(If *if_ob){
     writeExp(if_ob->exp2_);
     printf(" else ");
     writeExp(if_ob->exp3_);
+    return;
+}
+
+void writeDBIf(DBIf *dbif_ob){
+    printf("if ");
+    writeDBExp(dbif_ob->dbexp1_);
+    printf(" then ");
+    writeDBExp(dbif_ob->dbexp2_);
+    printf(" else ");
+    writeDBExp(dbif_ob->dbexp3_);
     return;
 }
 
@@ -145,11 +170,25 @@ void writeLet(Let *let_ob){
     return;
 }
 
+void writeDBLet(DBLet *dblet_ob){
+    printf("let . = ");
+    writeDBExp(dblet_ob->dbexp1_);
+    printf (" in ");
+    writeDBExp(dblet_ob->dbexp2_);
+    return;
+}
+
 void writeFun(Fun *fun_ob){
     printf("fun ");
     writeVar(fun_ob->arg);
     printf(" -> ");
     writeExp(fun_ob->exp_);
+    return;
+}
+
+void writeDBFun(DBFun *dbfun_ob){
+    printf("fun . -> ");
+    writeDBExp(dbfun_ob->dbexp_);
     return;
 }
 
@@ -170,6 +209,23 @@ void writeApp(App *app_ob){
     return;
 }
 
+void writeDBApp(DBApp *dbapp_ob){
+    char paren1 = 0;
+    char paren2 = 0;
+
+    if(dbapp_ob->dbexp1_->exp_type == IF || dbapp_ob->dbexp1_->exp_type == LET || dbapp_ob->dbexp1_->exp_type == FUN || dbapp_ob->dbexp1_->exp_type == LETREC)paren1 = 1;
+    if(dbapp_ob->dbexp2_->exp_type == OP || dbapp_ob->dbexp2_->exp_type == IF || dbapp_ob->dbexp2_->exp_type == LET || dbapp_ob->dbexp2_->exp_type == FUN || dbapp_ob->dbexp2_->exp_type == LETREC || dbapp_ob->dbexp2_->exp_type == APP)paren2 = 1;
+
+    if(paren1)printf("(");
+    writeDBExp(dbapp_ob->dbexp1_);
+    if(paren1)printf(")");
+    printf(" ");
+    if(paren2)printf("(");
+    writeDBExp(dbapp_ob->dbexp2_);
+    if(paren2)printf(")");
+    return;
+}
+
 void writeLetRec(LetRec *letrec_ob){
     printf("let rec ");
     writeVar(letrec_ob->fun);
@@ -179,6 +235,14 @@ void writeLetRec(LetRec *letrec_ob){
     writeExp(letrec_ob->exp1_);
     printf(" in ");
     writeExp(letrec_ob->exp2_);
+    return;
+}
+
+void writeDBLetRec(DBLetRec *dbletrec_ob){
+    printf("let rec . = fun . -> ");
+    writeDBExp(dbletrec_ob->dbexp1_);
+    printf(" in ");
+    writeDBExp(dbletrec_ob->dbexp2_);
     return;
 }
 
@@ -205,6 +269,29 @@ void writeExp(Exp *exp_ob){
     return;
 }
 
+void writeDBExp(DBExp *dbexp_ob){
+    if(dbexp_ob->exp_type==INT){
+        writeInt(dbexp_ob->u.int_);
+    }else if(dbexp_ob->exp_type==BOOL){
+        writeBool(dbexp_ob->u.bool_);
+    }else if(dbexp_ob->exp_type==VAR){
+        writeDBVar(dbexp_ob->u.dbvar_);
+    }else if(dbexp_ob->exp_type==OP){
+        writeDBOp(dbexp_ob->u.dbop_);
+    }else if(dbexp_ob->exp_type==IF){
+        writeDBIf(dbexp_ob->u.dbif_);
+    }else if(dbexp_ob->exp_type==LET){
+        writeDBLet(dbexp_ob->u.dblet_);
+    }else if(dbexp_ob->exp_type==FUN){
+        writeDBFun(dbexp_ob->u.dbfun_);
+    }else if(dbexp_ob->exp_type==APP){
+        writeDBApp(dbexp_ob->u.dbapp_);
+    }else{
+        writeDBLetRec(dbexp_ob->u.dbletrec_);
+    }
+    return;
+}
+
 void writeAsmp(Asmp *asmp_ob, int d){
     if(asmp_ob==NULL)return;
     printf("\n");
@@ -215,39 +302,22 @@ void writeAsmp(Asmp *asmp_ob, int d){
     return;
 }
 
-void writeInfr(Infr *infr_ob){
-    printf("%d",infr_ob->int1);
-    InfrOpType tmp = infr_ob->infr_type;
-    if(tmp == PLUS)printf(" plus ");
-    else if(tmp == MINUS)printf(" minus ");
-    else if(tmp == TIMES)printf(" times ");
-    else printf(" less than ");
-    printf("%d",infr_ob->int2);
-    printf(" is ");
-    writeVal(infr_ob->val_);
-    return;
-}
-
-void writeEval(Eval *eval_ob){
-    writeEnv(eval_ob->env_);
-    if(eval_ob->env_!=NULL)printf(" ");
-    printf("|- ");
-    writeExp(eval_ob->exp_);
-    printf(" evalto ");
-    writeVal(eval_ob->val_);
-    return;
-}
-
 void writeCncl(Cncl *cncl_ob, int d){
     ind(d);
-    if(cncl_ob->cncl_type==INFR)writeInfr(cncl_ob->u.infr_);
-    else writeEval(cncl_ob->u.eval_);
+
+    writeVarList(cncl_ob->varlist_);
+    if(cncl_ob->varlist_!=NULL)printf(" ");
+    printf("|- ");
+    writeExp(cncl_ob->exp_);
+    printf(" evalto ");
+    writeDBExp(cncl_ob->dbexp_);
+
     printf(" by ");
-    writeRuleName(cncl_ob);
+    //writeRuleName(cncl_ob);
+    printf("RuleName");
     printf(" {");
     writeAsmp(cncl_ob->asmp_, d+1);
     if(cncl_ob->asmp_!=NULL)ind(d);
     printf("}");
     return;
 }
-*/

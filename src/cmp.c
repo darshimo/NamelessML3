@@ -17,19 +17,19 @@ int cmpDBExp(DBExp *,DBExp *);
 
 void writegVar(Var *);
 
-void writegInt(Int *);
-void writegBool(Bool *);
-void writegDBVar(DBVar *);
-void writegDBOp(DBOp *);
-void writegDBIf(DBIf *);
-void writegDBLet(DBLet *);
-void writegDBFun(DBFun *);
-void writegDBApp(DBApp *);
-void writegDBLetRec(DBLetRec *);
-void writegDBExp(DBExp *);
+void writeInt(Int *);
+void writeBool(Bool *);
+void writeDBVar(DBVar *);
+void writeDBOp(DBOp *);
+void writeDBIf(DBIf *);
+void writeDBLet(DBLet *);
+void writeDBFun(DBFun *);
+void writeDBApp(DBApp *);
+void writeDBLetRec(DBLetRec *);
+void writeDBExp(DBExp *);
 
 
-//#define DEBUG
+#define DEBUG
 #ifdef DEBUG
 #include <stdio.h>
 #endif
@@ -38,9 +38,9 @@ void writegDBExp(DBExp *);
 int cmpInt(Int *ob1, Int *ob2){
 #ifdef DEBUG
     printf("cmpInt: ");
-    writegInt(ob1);
+    writeInt(ob1);
     printf(" : ");
-    writegInt(ob2);
+    writeInt(ob2);
     printf(" :\n");
 #endif
     return (ob1->i!=ob2->i);
@@ -49,9 +49,9 @@ int cmpInt(Int *ob1, Int *ob2){
 int cmpBool(Bool *ob1, Bool *ob2){
 #ifdef DEBUG
     printf("cmpBool: ");
-    writegBool(ob1);
+    writeBool(ob1);
     printf(" : ");
-    writegBool(ob2);
+    writeBool(ob2);
     printf(" :\n");
 #endif
     return (ob1->b!=ob2->b);
@@ -60,9 +60,9 @@ int cmpBool(Bool *ob1, Bool *ob2){
 int cmpDBVar(DBVar *ob1, DBVar *ob2){
 #ifdef DEBUG
     printf("cmpDBVar: ");
-    writegDBVar(ob1);
+    writeDBVar(ob1);
     printf(" : ");
-    writegDBVar(ob2);
+    writeDBVar(ob2);
     printf(" :\n");
 #endif
     return ob1->n!=ob2->n;
@@ -71,9 +71,9 @@ int cmpDBVar(DBVar *ob1, DBVar *ob2){
 int cmpDBOp(DBOp *ob1, DBOp *ob2){
 #ifdef DEBUG
     printf("cmpDBOp: ");
-    writegDBOp(ob1);
+    writeDBOp(ob1);
     printf(" : ");
-    writegDBOp(ob2);
+    writeDBOp(ob2);
     printf(" :\n");
 #endif
     if(ob1->op_type!=ob2->op_type)return 1;
@@ -85,9 +85,9 @@ int cmpDBOp(DBOp *ob1, DBOp *ob2){
 int cmpDBIf(DBIf *ob1, DBIf *ob2){
 #ifdef DEBUG
     printf("cmpDBIf: ");
-    writegDBIf(ob1);
+    writeDBIf(ob1);
     printf(" : ");
-    writegDBIf(ob2);
+    writeDBIf(ob2);
     printf(" :\n");
 #endif
     if(cmpDBExp(ob1->dbexp1_,ob2->dbexp1_))return 1;
@@ -99,9 +99,9 @@ int cmpDBIf(DBIf *ob1, DBIf *ob2){
 int cmpDBLet(DBLet *ob1, DBLet *ob2){
 #ifdef DEBUG
     printf("cmpDBLet: ");
-    writegDBLet(ob1);
+    writeDBLet(ob1);
     printf(" : ");
-    writegDBLet(ob2);
+    writeDBLet(ob2);
     printf(" :\n");
 #endif
     if(cmpDBExp(ob1->dbexp1_,ob2->dbexp1_))return 1;
@@ -112,9 +112,9 @@ int cmpDBLet(DBLet *ob1, DBLet *ob2){
 int cmpDBFun(DBFun *ob1, DBFun *ob2){
 #ifdef DEBUG
     printf("cmpDBFun: ");
-    writegDBFun(ob1);
+    writeDBFun(ob1);
     printf(" : ");
-    writegDBFun(ob2);
+    writeDBFun(ob2);
     printf(" :\n");
 #endif
     if(cmpDBExp(ob1->dbexp_,ob2->dbexp_))return 1;
@@ -124,9 +124,9 @@ int cmpDBFun(DBFun *ob1, DBFun *ob2){
 int cmpDBApp(DBApp *ob1, DBApp *ob2){
 #ifdef DEBUG
     printf("cmpDBApp: ");
-    writegDBApp(ob1);
+    writeDBApp(ob1);
     printf(" : ");
-    writegDBApp(ob2);
+    writeDBApp(ob2);
     printf(" :\n");
 #endif
     if(cmpDBExp(ob1->dbexp1_,ob2->dbexp1_))return 1;
@@ -137,9 +137,9 @@ int cmpDBApp(DBApp *ob1, DBApp *ob2){
 int cmpDBLetRec(DBLetRec *ob1, DBLetRec *ob2){
 #ifdef DEBUG
     printf("cmpDBLetRec: ");
-    writegDBLetRec(ob1);
+    writeDBLetRec(ob1);
     printf(" : ");
-    writegDBLetRec(ob2);
+    writeDBLetRec(ob2);
     printf(" :\n");
 #endif
     if(cmpDBExp(ob1->dbexp1_,ob2->dbexp1_))return 1;
