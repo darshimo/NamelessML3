@@ -5,7 +5,6 @@ int cmpInt(Int *,Int *);
 int cmpBool(Bool *,Bool *);
 int cmpClsr(Clsr *,Clsr *);
 int cmpClsrRec(ClsrRec *,ClsrRec *);
-int cmpLetVarExp(LetVarExp *,LetVarExp *);
 int cmpEnv(Env *,Env *);
 int cmpVal(Val *,Val *);
 int cmpVar(Var *,Var *);
@@ -21,7 +20,6 @@ void writeInt(Int *);
 void writeBool(Bool *);
 void writeClsr(Clsr *);
 void writeClsrRec(ClsrRec *);
-void writeLetVarExp(LetVarExp *);
 void writeEnv(Env *);
 void writeVal(Val *);
 void writeVar(Var *);
@@ -87,19 +85,6 @@ int cmpClsrRec(ClsrRec *ob1, ClsrRec *ob2){
     if(cmpEnv(ob1->env_,ob2->env_))return 1;
     if(cmpVar(ob1->fun,ob2->fun))return 1;
     if(cmpVar(ob1->arg,ob2->arg))return 1;
-    if(cmpExp(ob1->exp_,ob2->exp_))return 1;
-    return 0;
-}
-
-int cmpLetVarExp(LetVarExp *ob1, LetVarExp *ob2){
-#ifdef DEBUG
-    printf("cmpLetVarExp: ");
-    writeLetVarExp(ob1);
-    printf(" : ");
-    writeLetVarExp(ob2);
-    printf(" :\n");
-#endif
-    if(cmpVar(ob1->var_,ob2->var_))return 1;
     if(cmpExp(ob1->exp_,ob2->exp_))return 1;
     return 0;
 }
@@ -174,8 +159,9 @@ int cmpLet(Let *ob1, Let *ob2){
     writeLet(ob2);
     printf(" :\n");
 #endif
-    if(cmpLetVarExp(ob1->lve_,ob2->lve_))return 1;
-    if(cmpExp(ob1->exp_,ob2->exp_))return 1;
+    if(cmpVar(ob1->var_,ob2->var_))return 1;
+    if(cmpExp(ob1->exp1_,ob2->exp1_))return 1;
+    if(cmpExp(ob1->exp2_,ob2->exp2_))return 1;
     return 0;
 }
 

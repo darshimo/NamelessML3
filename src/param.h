@@ -35,8 +35,6 @@ struct Bool_;
 struct Clsr_;
 struct ClsrRec_;
 
-struct LetVarExp_;
-
 struct Env_;
 
 struct Val_;
@@ -81,11 +79,6 @@ typedef struct ClsrRec_{
     struct Exp_ *exp_;
 }ClsrRec;
 
-typedef struct LetVarExp_ {
-    struct Var_ *var_;
-    struct Exp_ *exp_;
-}LetVarExp;
-
 typedef struct Env_{
     struct Var_ *var_;
     struct Val_ *val_;
@@ -119,8 +112,9 @@ typedef struct If_{
 }If;
 
 typedef struct Let_{
-    struct LetVarExp_ *lve_;
-    struct Exp_ *exp_;
+    struct Var_ *var_;
+    struct Exp_ *exp1_;
+    struct Exp_ *exp2_;
 }Let;
 
 typedef struct Fun_{

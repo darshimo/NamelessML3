@@ -11,7 +11,6 @@ Int *copyInt(Int *);
 Bool *copyBool(Bool *);
 Clsr *copyClsr(Clsr *);
 ClsrRec *copyClsrRec(ClsrRec *);
-LetVarExp *copyLetVarExp(LetVarExp *);
 Env *copyEnv(Env *);
 Val *copyVal(Val *);
 Var *copyVar(Var *);
@@ -73,19 +72,6 @@ ClsrRec *copyClsrRec(ClsrRec *sample){
     ob->exp_ = copyExp(sample->exp_);
 #ifdef DEBUG
     printf("copyClsrRec end\n");
-#endif
-    return ob;
-}
-
-LetVarExp *copyLetVarExp(LetVarExp *sample){
-#ifdef DEBUG
-    printf("copyLetVarExp start\n");
-#endif
-    LetVarExp *ob = (LetVarExp *)malloc(sizeof(LetVarExp));
-    ob->var_ = copyVar(sample->var_);
-    ob->exp_ = copyExp(sample->exp_);
-#ifdef DEBUG
-    printf("copyLetVarExp end\n");
 #endif
     return ob;
 }
@@ -172,8 +158,9 @@ Let *copyLet(Let *sample){
     printf("copyLet start\n");
 #endif
     Let *ob = (Let *)malloc(sizeof(Let));
-    ob->lve_ = copyLetVarExp(sample->lve_);
-    ob->exp_ = copyExp(sample->exp_);
+    ob->var_ = copyVar(sample->var_);
+    ob->exp1_ = copyExp(sample->exp1_);
+    ob->exp2_ = copyExp(sample->exp2_);
 #ifdef DEBUG
     printf("copyLet end\n");
 #endif

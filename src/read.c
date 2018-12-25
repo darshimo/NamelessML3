@@ -19,7 +19,6 @@ Int *readInt(char *);
 Bool *readBool(char *);
 Clsr *readClsr(char *, char *);
 ClsrRec *readClsrRec(char *, char *);
-LetVarExp *readLetVarExp(char *);
 Env *readEnv(char *);
 Val *readVal(char *);
 Var *readVar(char *);
@@ -114,26 +113,6 @@ ClsrRec *readClsrRec(char *str1, char *str2){
     clsrrec_ob->exp_ = readExp(str2);
 
     return clsrrec_ob;
-}
-
-
-LetVarExp *readLetVarExp(char *str){
-#ifdef DEBUG
-    printf("lve : %s\n",str);
-#endif
-    LetVarExp *lve_ob = (LetVarExp *)malloc(sizeof(LetVarExp));
-    char *str1,*str2;
-
-    str1 = str;
-    str2 = strstr(str1,"=");
-    *str2 = '\0';
-    str2++;
-    str2 += strspn(str2," ");
-
-    lve_ob->var_ = readVar(str1);
-    lve_ob->exp_ = readExp(str2);
-
-    return lve_ob;
 }
 
 
@@ -377,36 +356,41 @@ Let *readLet(char *str){
 #endif
     Let *let_ob = (Let *)malloc(sizeof(Let));
 
-    char *tmp;
+    char *str1, *str2;
 
-    tmp = str;
+    str += strcspn(str," ");
+    str += strspn(str," ");
+    str1 = str;
+    str1 += strcspn(str1," ");
+    str1 += strspn(str1," ");
+    str1 += strcspn(str1," ");
+    str1 += strspn(str1," ");
+    str2 = str1;
 
-    str++;
     int count = 0;
     while(1){
-        str+=strcspn(str,"li");
-        if(strncmp(str-1," let ",5)==0){
+        str2+=strcspn(str2,"li");
+        if(strncmp(str2-1," let ",5)==0){
             count++;
-        }else if(strncmp(str-1," in ",4)==0){
+        }else if(strncmp(str2-1," in ",4)==0){
             if(count==0){
                 break;
             }
             count--;
-        }else if(*str=='\0'){
+        }else if(*str2=='\0'){
             error("2mismatch let and in.");
         }
-        str++;
+        str2++;
     }
 
-    *str = '\0';
-    str++;
-    tmp += strcspn(tmp," ");
-    tmp += strspn(tmp," ");
-    str += strcspn(str," ");
-    str += strspn(str," ");
+    *str2 = '\0';
+    str2++;
+    str2 += strcspn(str2," ");
+    str2 += strspn(str2," ");
 
-    let_ob->lve_ = readLetVarExp(tmp);
-    let_ob->exp_ = readExp(str);
+    let_ob->var_ = readVar(str);
+    let_ob->exp1_ = readExp(str1);
+    let_ob->exp2_ = readExp(str2);
 
     return let_ob;
 }

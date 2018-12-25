@@ -5,7 +5,6 @@ void writeInt(Int *);
 void writeBool(Bool *);
 void writeClsr(Clsr *);
 void writeClsrRec(ClsrRec *);
-void writeLetVarExp(LetVarExp *);
 void writeEnv(Env *);
 void writeVal(Val *);
 void writeVar(Var *);
@@ -57,16 +56,6 @@ void writeClsrRec(ClsrRec *clsrrec_ob){
     printf(" -> ");
     writeExp(clsrrec_ob->exp_);
     printf("]");
-    return;
-}
-
-void writeLetVarExp(LetVarExp *lve_ob){
-    if(lve_ob==NULL)return;
-    printf("let ");
-    writeVar(lve_ob->var_);
-    printf(" = ");
-    writeExp(lve_ob->exp_);
-    printf(" in");
     return;
 }
 
@@ -150,9 +139,12 @@ void writeIf(If *if_ob){
 }
 
 void writeLet(Let *let_ob){
-    writeLetVarExp(let_ob->lve_);
-    printf(" ");
-    writeExp(let_ob->exp_);
+    printf("let ");
+    writeVar(let_ob->var_);
+    printf (" = ");
+    writeExp(let_ob->exp1_);
+    printf (" in ");
+    writeExp(let_ob->exp2_);
     return;
 }
 

@@ -5,7 +5,6 @@ void debugInt(Int *, int);
 void debugBool(Bool *, int);
 void debugClsr(Clsr *, int);
 void debugClsrRec(ClsrRec *, int);
-void debugLetVarExp(LetVarExp *, int);
 void debugEnv(Env *, int);
 void debugVal(Val *, int);
 void debugVar(Var *, int);
@@ -55,14 +54,6 @@ void debugClsrRec(ClsrRec *clsrrec_ob, int d){
     debugVar(clsrrec_ob->fun,d+1);
     debugVar(clsrrec_ob->arg,d+1);
     debugExp(clsrrec_ob->exp_,d+1);
-    return;
-}
-
-void debugLetVarExp(LetVarExp *lve_ob, int d){
-    tree(d);
-    printf("lve\n");
-    debugVar(lve_ob->var_,d+1);
-    debugExp(lve_ob->exp_,d+1);
     return;
 }
 
@@ -124,8 +115,9 @@ void debugIf(If *if_ob, int d){
 void debugLet(Let *let_ob, int d){
     tree(d);
     printf("let\n");
-    debugLetVarExp(let_ob->lve_,d+1);
-    debugExp(let_ob->exp_,d+1);
+    debugVar(let_ob->var_,d+1);
+    debugExp(let_ob->exp1_,d+1);
+    debugExp(let_ob->exp2_,d+1);
     return;
 }
 

@@ -10,7 +10,6 @@ void freeInt(Int *);
 void freeBool(Bool *);
 void freeClsr(Clsr *);
 void freeClsrRec(ClsrRec *);
-void freeLetVarExp(LetVarExp *);
 void freeEnv(Env *);
 void freeVal(Val *);
 void freeVar(Var *);
@@ -63,16 +62,6 @@ void freeClsrRec(ClsrRec *clsrrec_ob){
     freeVar(clsrrec_ob->arg);
     freeExp(clsrrec_ob->exp_);
     free(clsrrec_ob);
-    return;
-}
-
-void freeLetVarExp(LetVarExp *lve_ob){
-#ifdef DEBUG
-    printf("free lve\n");
-#endif
-    freeVar(lve_ob->var_);
-    freeExp(lve_ob->exp_);
-    free(lve_ob);
     return;
 }
 
@@ -134,8 +123,9 @@ void freeLet(Let *let_ob){
 #ifdef DEBUG
     printf("free let\n");
 #endif
-    freeLetVarExp(let_ob->lve_);
-    freeExp(let_ob->exp_);
+    freeVar(let_ob->var_);
+    freeExp(let_ob->exp1_);
+    freeExp(let_ob->exp2_);
     free(let_ob);
     return;
 }

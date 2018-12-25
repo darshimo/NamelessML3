@@ -17,7 +17,6 @@ void writeInt(Int *);
 void writeBool(Bool *);
 void writeClsr(Clsr *);
 void writeClsrRec(ClsrRec *);
-void writeLetVarExp(LetVarExp *);
 void writeEnv(Env *);
 void writeVal(Val *);
 void writeFun(Fun *);
@@ -301,9 +300,9 @@ void E_Let(Cncl *cncl_ob, int d){
     printf("\n");
 #endif
     Env *eps = cncl_ob->u.eval_->env_;
-    Var *x = cncl_ob->u.eval_->exp_->u.let_->lve_->var_;
-    Exp *e1 = cncl_ob->u.eval_->exp_->u.let_->lve_->exp_;
-    Exp *e2 = cncl_ob->u.eval_->exp_->u.let_->exp_;
+    Var *x = cncl_ob->u.eval_->exp_->u.let_->var_;
+    Exp *e1 = cncl_ob->u.eval_->exp_->u.let_->exp1_;
+    Exp *e2 = cncl_ob->u.eval_->exp_->u.let_->exp2_;
 
     Asmp *asmp_ob = (Asmp *)malloc(sizeof(Asmp));
     asmp_ob->cncl_ = (Cncl *)malloc(sizeof(Cncl));
