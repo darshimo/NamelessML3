@@ -68,7 +68,6 @@ int main(int argc, char *argv[]){
     printf("write complete.\n");
 #endif
 
-    /*
 
 #ifdef DEBUG
     printf("free start.\n");
@@ -77,7 +76,6 @@ int main(int argc, char *argv[]){
 #ifdef DEBUG
     printf("free complete.\n\n");
 #endif
-    */
 
     return 0;
 }

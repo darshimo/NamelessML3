@@ -1,18 +1,16 @@
 #include "param.h"
 #include <stdlib.h>
-/*
 
 //#define DEBUG
 #ifdef DEBUG
 #include <stdio.h>
 #endif
 
+void freeVarList(VarList *);
+
 void freeInt(Int *);
 void freeBool(Bool *);
-void freeClsr(Clsr *);
-void freeClsrRec(ClsrRec *);
-void freeEnv(Env *);
-void freeVal(Val *);
+
 void freeVar(Var *);
 void freeOp(Op *);
 void freeIf(If *);
@@ -21,9 +19,17 @@ void freeFun(Fun *);
 void freeApp(App *);
 void freeLetRec(LetRec *);
 void freeExp(Exp *);
+
+void freeDBVar(DBVar *);
+void freeDBOp(DBOp *);
+void freeDBIf(DBIf *);
+void freeDBLet(DBLet *);
+void freeDBFun(DBFun *);
+void freeDBApp(DBApp *);
+void freeDBLetRec(DBLetRec *);
+void freeDBExp(DBExp *);
+
 void freeAsmp(Asmp *);
-void freeInfr(Infr *);
-void freeEval(Eval *);
 void freeCncl(Cncl *);
 
 
@@ -43,50 +49,14 @@ void freeBool(Bool *bool_ob){
     return;
 }
 
-void freeClsr(Clsr *clsr_ob){
+void freeVarList(VarList *varlist_ob){
+    if(varlist_ob==NULL)return;
 #ifdef DEBUG
-    printf("free clsr\n");
+    printf("free varlist\n");
 #endif
-    freeEnv(clsr_ob->env_);
-    freeVar(clsr_ob->arg);
-    freeExp(clsr_ob->exp_);
-    free(clsr_ob);
-    return;
-}
-
-void freeClsrRec(ClsrRec *clsrrec_ob){
-#ifdef DEBUG
-    printf("free clsrrec\n");
-#endif
-    freeEnv(clsrrec_ob->env_);
-    freeVar(clsrrec_ob->fun);
-    freeVar(clsrrec_ob->arg);
-    freeExp(clsrrec_ob->exp_);
-    free(clsrrec_ob);
-    return;
-}
-
-void freeEnv(Env *env_ob){
-    if(env_ob==NULL)return;
-#ifdef DEBUG
-    printf("free env\n");
-#endif
-    freeVar(env_ob->var_);
-    freeVal(env_ob->val_);
-    freeEnv(env_ob->prev);
-    free(env_ob);
-    return;
-}
-
-void freeVal(Val *val_ob){
-#ifdef DEBUG
-    printf("free val\n");
-#endif
-    if(val_ob->val_type==INT_)freeInt(val_ob->u.int_);
-    else if(val_ob->val_type==BOOL_)freeBool(val_ob->u.bool_);
-    else if(val_ob->val_type==CLSR)freeClsr(val_ob->u.clsr_);
-    else freeClsrRec(val_ob->u.clsrrec_);
-    free(val_ob);
+    freeVar(varlist_ob->var_);
+    freeVarList(varlist_ob->prev);
+    free(varlist_ob);
     return;
 }
 
@@ -99,6 +69,14 @@ void freeVar(Var *var_ob){
     return;
 }
 
+void freeDBVar(DBVar *dbvar_ob){
+#ifdef DEBUG
+    printf("free dbvar\n");
+#endif
+    free(dbvar_ob);
+    return;
+}
+
 void freeOp(Op *op_ob){
 #ifdef DEBUG
     printf("free op\n");
@@ -106,6 +84,16 @@ void freeOp(Op *op_ob){
     freeExp(op_ob->exp1_);
     freeExp(op_ob->exp2_);
     free(op_ob);
+    return;
+}
+
+void freeDBOp(DBOp *dbop_ob){
+#ifdef DEBUG
+    printf("free dbop\n");
+#endif
+    freeDBExp(dbop_ob->dbexp1_);
+    freeDBExp(dbop_ob->dbexp2_);
+    free(dbop_ob);
     return;
 }
 
@@ -120,6 +108,17 @@ void freeIf(If *if_ob){
     return;
 }
 
+void freeDBIf(DBIf *dbif_ob){
+#ifdef DEBUG
+    printf("free dbif\n");
+#endif
+    freeDBExp(dbif_ob->dbexp1_);
+    freeDBExp(dbif_ob->dbexp2_);
+    freeDBExp(dbif_ob->dbexp3_);
+    free(dbif_ob);
+    return;
+}
+
 void freeLet(Let *let_ob){
 #ifdef DEBUG
     printf("free let\n");
@@ -128,6 +127,16 @@ void freeLet(Let *let_ob){
     freeExp(let_ob->exp1_);
     freeExp(let_ob->exp2_);
     free(let_ob);
+    return;
+}
+
+void freeDBLet(DBLet *dblet_ob){
+#ifdef DEBUG
+    printf("free dblet\n");
+#endif
+    freeDBExp(dblet_ob->dbexp1_);
+    freeDBExp(dblet_ob->dbexp2_);
+    free(dblet_ob);
     return;
 }
 
@@ -141,6 +150,15 @@ void freeFun(Fun *fun_ob){
     return;
 }
 
+void freeDBFun(DBFun *dbfun_ob){
+#ifdef DEBUG
+    printf("free dbfun\n");
+#endif
+    freeDBExp(dbfun_ob->dbexp_);
+    free(dbfun_ob);
+    return;
+}
+
 void freeApp(App *app_ob){
 #ifdef DEBUG
     printf("free app\n");
@@ -148,6 +166,16 @@ void freeApp(App *app_ob){
     freeExp(app_ob->exp1_);
     freeExp(app_ob->exp2_);
     free(app_ob);
+    return;
+}
+
+void freeDBApp(DBApp *dbapp_ob){
+#ifdef DEBUG
+    printf("free dbapp\n");
+#endif
+    freeDBExp(dbapp_ob->dbexp1_);
+    freeDBExp(dbapp_ob->dbexp2_);
+    free(dbapp_ob);
     return;
 }
 
@@ -159,6 +187,15 @@ void freeLetRec(LetRec *letrec_ob){
     freeVar(letrec_ob->arg);
     freeExp(letrec_ob->exp1_);
     freeExp(letrec_ob->exp2_);
+    return;
+}
+
+void freeDBLetRec(DBLetRec *dbletrec_ob){
+#ifdef DEBUG
+    printf("free dbletrec\n");
+#endif
+    freeDBExp(dbletrec_ob->dbexp1_);
+    freeDBExp(dbletrec_ob->dbexp2_);
     return;
 }
 
@@ -179,6 +216,23 @@ void freeExp(Exp *exp_ob){
     return;
 }
 
+void freeDBExp(DBExp *dbexp_ob){
+#ifdef DEBUG
+    printf("free dbexp\n");
+#endif
+    if(dbexp_ob->exp_type==INT)freeInt(dbexp_ob->u.int_);
+    else if(dbexp_ob->exp_type==BOOL)freeBool(dbexp_ob->u.bool_);
+    else if(dbexp_ob->exp_type==VAR)freeDBVar(dbexp_ob->u.dbvar_);
+    else if(dbexp_ob->exp_type==OP)freeDBOp(dbexp_ob->u.dbop_);
+    else if(dbexp_ob->exp_type==IF)freeDBIf(dbexp_ob->u.dbif_);
+    else if(dbexp_ob->exp_type==LET)freeDBLet(dbexp_ob->u.dblet_);
+    else if(dbexp_ob->exp_type==FUN)freeDBFun(dbexp_ob->u.dbfun_);
+    else if(dbexp_ob->exp_type==APP)freeDBApp(dbexp_ob->u.dbapp_);
+    else freeDBLetRec(dbexp_ob->u.dbletrec_);
+    free(dbexp_ob);
+    return;
+}
+
 void freeAsmp(Asmp *asmp_ob){
     if(asmp_ob==NULL)return;
 #ifdef DEBUG
@@ -190,34 +244,14 @@ void freeAsmp(Asmp *asmp_ob){
     return;
 }
 
-void freeInfr(Infr *infr_ob){
-#ifdef DEBUG
-    printf("free infr\n");
-#endif
-    freeVal(infr_ob->val_);
-    free(infr_ob);
-    return;
-}
-
-void freeEval(Eval *eval_ob){
-#ifdef DEBUG
-    printf("free eval\n");
-#endif
-    freeEnv(eval_ob->env_);
-    freeExp(eval_ob->exp_);
-    freeVal(eval_ob->val_);
-    free(eval_ob);
-    return;
-}
-
 void freeCncl(Cncl *cncl_ob){
 #ifdef DEBUG
     printf("free cncl\n");
 #endif
     freeAsmp(cncl_ob->asmp_);
-    if(cncl_ob->cncl_type==INFR)freeInfr(cncl_ob->u.infr_);
-    else freeEval(cncl_ob->u.eval_);
+    freeVarList(cncl_ob->varlist_);
+    freeExp(cncl_ob->exp_);
+    freeDBExp(cncl_ob->dbexp_);
     free(cncl_ob);
     return;
 }
-*/
