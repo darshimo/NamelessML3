@@ -1,0 +1,1 @@
+|- let x = 3 * 3 in let y = 4 * x in x + y ==> let . = 3 * 3 in let . = 4 * #1 in #2 + #1

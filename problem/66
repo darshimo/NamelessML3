@@ -1,0 +1,1 @@
+|- let a = 3 in let f = fun y -> y * a in let a = 5 in f 4 ==> let . = 3 in let . = fun . -> #1 * #2 in let . = 5 in #2 4

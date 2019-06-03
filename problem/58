@@ -1,0 +1,1 @@
+x |- let x = x * 2 in x + x ==> let . = #1 * 2 in #1 + #1

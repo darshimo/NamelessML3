@@ -1,0 +1,1 @@
+|- let y = 2 in fun x -> x + y ==> let . = 2 in fun . -> #1 + #2
