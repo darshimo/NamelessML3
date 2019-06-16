@@ -1,7 +1,9 @@
 #include <string.h>
 #include "param.h"
 
-//#define DEBUG
+#ifdef DBG_ALL
+#define DBG_CMP
+#endif
 
 int cmpVar(Var *,Var *);
 
@@ -30,7 +32,7 @@ void writeDBLetRec(DBLetRec *);
 void writeDBExp(DBExp *);
 
 
-#ifdef DEBUG
+#ifdef DBG_CMP
 #include <stdio.h>
 #endif
 
@@ -40,7 +42,7 @@ int cmpVar(Var *ob1, Var *ob2){
 }
 
 int cmpInt(Int *ob1, Int *ob2){
-#ifdef DEBUG
+#ifdef DBG_CMP
     printf("cmpInt: ");
     writeInt(ob1);
     printf(" : ");
@@ -51,7 +53,7 @@ int cmpInt(Int *ob1, Int *ob2){
 }
 
 int cmpBool(Bool *ob1, Bool *ob2){
-#ifdef DEBUG
+#ifdef DBG_CMP
     printf("cmpBool: ");
     writeBool(ob1);
     printf(" : ");
@@ -62,7 +64,7 @@ int cmpBool(Bool *ob1, Bool *ob2){
 }
 
 int cmpDBVar(DBVar *ob1, DBVar *ob2){
-#ifdef DEBUG
+#ifdef DBG_CMP
     printf("cmpDBVar: ");
     writeDBVar(ob1);
     printf(" : ");
@@ -73,7 +75,7 @@ int cmpDBVar(DBVar *ob1, DBVar *ob2){
 }
 
 int cmpDBOp(DBOp *ob1, DBOp *ob2){
-#ifdef DEBUG
+#ifdef DBG_CMP
     printf("cmpDBOp: ");
     writeDBOp(ob1);
     printf(" : ");
@@ -87,7 +89,7 @@ int cmpDBOp(DBOp *ob1, DBOp *ob2){
 }
 
 int cmpDBIf(DBIf *ob1, DBIf *ob2){
-#ifdef DEBUG
+#ifdef DBG_CMP
     printf("cmpDBIf: ");
     writeDBIf(ob1);
     printf(" : ");
@@ -101,7 +103,7 @@ int cmpDBIf(DBIf *ob1, DBIf *ob2){
 }
 
 int cmpDBLet(DBLet *ob1, DBLet *ob2){
-#ifdef DEBUG
+#ifdef DBG_CMP
     printf("cmpDBLet: ");
     writeDBLet(ob1);
     printf(" : ");
@@ -114,7 +116,7 @@ int cmpDBLet(DBLet *ob1, DBLet *ob2){
 }
 
 int cmpDBFun(DBFun *ob1, DBFun *ob2){
-#ifdef DEBUG
+#ifdef DBG_CMP
     printf("cmpDBFun: ");
     writeDBFun(ob1);
     printf(" : ");
@@ -126,7 +128,7 @@ int cmpDBFun(DBFun *ob1, DBFun *ob2){
 }
 
 int cmpDBApp(DBApp *ob1, DBApp *ob2){
-#ifdef DEBUG
+#ifdef DBG_CMP
     printf("cmpDBApp: ");
     writeDBApp(ob1);
     printf(" : ");
@@ -139,7 +141,7 @@ int cmpDBApp(DBApp *ob1, DBApp *ob2){
 }
 
 int cmpDBLetRec(DBLetRec *ob1, DBLetRec *ob2){
-#ifdef DEBUG
+#ifdef DBG_CMP
     printf("cmpDBLetRec: ");
     writeDBLetRec(ob1);
     printf(" : ");

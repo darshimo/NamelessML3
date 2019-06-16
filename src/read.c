@@ -3,9 +3,11 @@
 #include <string.h>
 #include <ctype.h>
 
-//#define DEBUG
+#ifdef DBG_ALL
+#define DBG_READ
+#endif
 
-#ifdef DEBUG
+#ifdef DBG_READ
 #include <stdio.h>
 void ind(int d);
 #endif
@@ -41,7 +43,7 @@ Cncl *readCncl(char *);
 
 
 Int *readInt(char *str){
-#ifdef DEBUG
+#ifdef DBG_READ
     printf("int : %s\n",str);
 #endif
     Int *int_ob = (Int *)malloc(sizeof(Int));
@@ -51,7 +53,7 @@ Int *readInt(char *str){
 
 
 Bool *readBool(char *str){
-#ifdef DEBUG
+#ifdef DBG_READ
     printf("bool : %s\n",str);
 #endif
     Bool *bool_ob = (Bool *)malloc(sizeof(Bool));
@@ -80,7 +82,7 @@ VarList *readVarList(char *str){
         varlist_tmp = readVarList(tmp);
     }
 
-#ifdef DEBUG
+#ifdef DBG_READ
     printf("varlist : %s\n",str);
 #endif
 
@@ -92,7 +94,7 @@ VarList *readVarList(char *str){
 
 
 Var *readVar(char *str){
-#ifdef DEBUG
+#ifdef DBG_READ
     printf("var : %s\n",str);
 #endif
     Var *var_ob = (Var *)malloc(sizeof(Var));
@@ -103,7 +105,7 @@ Var *readVar(char *str){
 }
 
 DBVar *readDBVar(char *str){
-#ifdef DEBUG
+#ifdef DBG_READ
     printf("dbvar : %s\n",str);
 #endif
     DBVar *dbvar_ob = (DBVar *)malloc(sizeof(DBVar));
@@ -115,7 +117,7 @@ DBVar *readDBVar(char *str){
 
 
 If *readIf(char *str){
-#ifdef DEBUG
+#ifdef DBG_READ
     printf("if  : %s\n",str);
 #endif
     If *if_ob = (If *)malloc(sizeof(If));
@@ -170,7 +172,7 @@ If *readIf(char *str){
 }
 
 DBIf *readDBIf(char *str){
-#ifdef DEBUG
+#ifdef DBG_READ
     printf("dbif  : %s\n",str);
 #endif
     DBIf *dbif_ob = (DBIf *)malloc(sizeof(DBIf));
@@ -226,7 +228,7 @@ DBIf *readDBIf(char *str){
 
 
 Op *readOp(char* str){
-#ifdef DEBUG
+#ifdef DBG_READ
     printf("op  : %s\n",str);
 #endif
     Op *op_ob = (Op *)malloc(sizeof(Op));
@@ -282,7 +284,7 @@ Op *readOp(char* str){
 }
 
 DBOp *readDBOp(char* str){
-#ifdef DEBUG
+#ifdef DBG_READ
     printf("dbop  : %s\n",str);
 #endif
     DBOp *dbop_ob = (DBOp *)malloc(sizeof(DBOp));
@@ -339,7 +341,7 @@ DBOp *readDBOp(char* str){
 
 
 Let *readLet(char *str){
-#ifdef DEBUG
+#ifdef DBG_READ
     printf("let : %s\n",str);
 #endif
     Let *let_ob = (Let *)malloc(sizeof(Let));
@@ -385,7 +387,7 @@ Let *readLet(char *str){
 
 
 DBLet *readDBLet(char *str){
-#ifdef DEBUG
+#ifdef DBG_READ
     printf("dblet : %s\n",str);
 #endif
     DBLet *dblet_ob = (DBLet *)malloc(sizeof(DBLet));
@@ -428,7 +430,7 @@ DBLet *readDBLet(char *str){
 
 
 Fun *readFun(char *str){
-#ifdef DEBUG
+#ifdef DBG_READ
     printf("fun : %s\n",str);
 #endif
     Fun *fun_ob = (Fun *)malloc(sizeof(Fun));
@@ -452,7 +454,7 @@ Fun *readFun(char *str){
 
 
 DBFun *readDBFun(char *str){
-#ifdef DEBUG
+#ifdef DBG_READ
     printf("dbfun : %s\n",str);
 #endif
     DBFun *dbfun_ob = (DBFun *)malloc(sizeof(DBFun));
@@ -471,7 +473,7 @@ DBFun *readDBFun(char *str){
 
 
 App *readApp(char *str){
-#ifdef DEBUG
+#ifdef DBG_READ
     printf("app : %s\n",str);
 #endif
     App *app_ob = (App *)malloc(sizeof(App));
@@ -520,7 +522,7 @@ App *readApp(char *str){
 
 
 DBApp *readDBApp(char *str){
-#ifdef DEBUG
+#ifdef DBG_READ
     printf("dbapp : %s\n",str);
 #endif
     DBApp *dbapp_ob = (DBApp *)malloc(sizeof(DBApp));
@@ -569,7 +571,7 @@ DBApp *readDBApp(char *str){
 
 
 LetRec *readLetRec(char *str){
-#ifdef DEBUG
+#ifdef DBG_READ
     printf("letrec : %s\n",str);
 #endif
     LetRec *letrec_ob = (LetRec *)malloc(sizeof(LetRec));
@@ -628,7 +630,7 @@ LetRec *readLetRec(char *str){
 
 
 DBLetRec *readDBLetRec(char *str){
-#ifdef DEBUG
+#ifdef DBG_READ
     printf("dbletrec : %s\n",str);
 #endif
     DBLetRec *dbletrec_ob = (DBLetRec *)malloc(sizeof(DBLetRec));
@@ -697,7 +699,7 @@ Exp *readExp(char* str){
         }
     }
 
-#ifdef DEBUG
+#ifdef DBG_READ
     //printf("exp : %s\n",str);
 #endif
 
@@ -796,7 +798,7 @@ DBExp *readDBExp(char* str){
         }
     }
 
-#ifdef DEBUG
+#ifdef DBG_READ
     //printf("dbexp : %s\n",str);
 #endif
 
@@ -867,7 +869,7 @@ DBExp *readDBExp(char* str){
 
 
 Cncl *readCncl(char* str){
-#ifdef DEBUG
+#ifdef DBG_READ
     printf("cncl: %s\n",str);
 #endif
     Cncl *cncl_ob = (Cncl *)malloc(sizeof(Cncl));

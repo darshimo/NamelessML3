@@ -1,8 +1,11 @@
 #include "param.h"
 #include <stdlib.h>
 
-//#define DEBUG
-#ifdef DEBUG
+#ifdef DBG_ALL
+#define DBG_FREE
+#endif
+
+#ifdef DBG_FREE
 #include <stdio.h>
 #endif
 
@@ -34,7 +37,7 @@ void freeCncl(Cncl *);
 
 
 void freeInt(Int *int_ob){
-#ifdef DEBUG
+#ifdef DBG_FREE
     printf("free int\n");
 #endif
     free(int_ob);
@@ -42,7 +45,7 @@ void freeInt(Int *int_ob){
 }
 
 void freeBool(Bool *bool_ob){
-#ifdef DEBUG
+#ifdef DBG_FREE
     printf("free bool\n");
 #endif
     free(bool_ob);
@@ -51,7 +54,7 @@ void freeBool(Bool *bool_ob){
 
 void freeVarList(VarList *varlist_ob){
     if(varlist_ob==NULL)return;
-#ifdef DEBUG
+#ifdef DBG_FREE
     printf("free varlist\n");
 #endif
     freeVar(varlist_ob->var_);
@@ -61,7 +64,7 @@ void freeVarList(VarList *varlist_ob){
 }
 
 void freeVar(Var *var_ob){
-#ifdef DEBUG
+#ifdef DBG_FREE
     printf("free var\n");
 #endif
     free(var_ob->var_name);
@@ -70,7 +73,7 @@ void freeVar(Var *var_ob){
 }
 
 void freeDBVar(DBVar *dbvar_ob){
-#ifdef DEBUG
+#ifdef DBG_FREE
     printf("free dbvar\n");
 #endif
     free(dbvar_ob);
@@ -78,7 +81,7 @@ void freeDBVar(DBVar *dbvar_ob){
 }
 
 void freeOp(Op *op_ob){
-#ifdef DEBUG
+#ifdef DBG_FREE
     printf("free op\n");
 #endif
     freeExp(op_ob->exp1_);
@@ -88,7 +91,7 @@ void freeOp(Op *op_ob){
 }
 
 void freeDBOp(DBOp *dbop_ob){
-#ifdef DEBUG
+#ifdef DBG_FREE
     printf("free dbop\n");
 #endif
     freeDBExp(dbop_ob->dbexp1_);
@@ -98,7 +101,7 @@ void freeDBOp(DBOp *dbop_ob){
 }
 
 void freeIf(If *if_ob){
-#ifdef DEBUG
+#ifdef DBG_FREE
     printf("free if\n");
 #endif
     freeExp(if_ob->exp1_);
@@ -109,7 +112,7 @@ void freeIf(If *if_ob){
 }
 
 void freeDBIf(DBIf *dbif_ob){
-#ifdef DEBUG
+#ifdef DBG_FREE
     printf("free dbif\n");
 #endif
     freeDBExp(dbif_ob->dbexp1_);
@@ -120,7 +123,7 @@ void freeDBIf(DBIf *dbif_ob){
 }
 
 void freeLet(Let *let_ob){
-#ifdef DEBUG
+#ifdef DBG_FREE
     printf("free let\n");
 #endif
     freeVar(let_ob->var_);
@@ -131,7 +134,7 @@ void freeLet(Let *let_ob){
 }
 
 void freeDBLet(DBLet *dblet_ob){
-#ifdef DEBUG
+#ifdef DBG_FREE
     printf("free dblet\n");
 #endif
     freeDBExp(dblet_ob->dbexp1_);
@@ -141,7 +144,7 @@ void freeDBLet(DBLet *dblet_ob){
 }
 
 void freeFun(Fun *fun_ob){
-#ifdef DEBUG
+#ifdef DBG_FREE
     printf("free fun\n");
 #endif
     freeVar(fun_ob->arg);
@@ -151,7 +154,7 @@ void freeFun(Fun *fun_ob){
 }
 
 void freeDBFun(DBFun *dbfun_ob){
-#ifdef DEBUG
+#ifdef DBG_FREE
     printf("free dbfun\n");
 #endif
     freeDBExp(dbfun_ob->dbexp_);
@@ -160,7 +163,7 @@ void freeDBFun(DBFun *dbfun_ob){
 }
 
 void freeApp(App *app_ob){
-#ifdef DEBUG
+#ifdef DBG_FREE
     printf("free app\n");
 #endif
     freeExp(app_ob->exp1_);
@@ -170,7 +173,7 @@ void freeApp(App *app_ob){
 }
 
 void freeDBApp(DBApp *dbapp_ob){
-#ifdef DEBUG
+#ifdef DBG_FREE
     printf("free dbapp\n");
 #endif
     freeDBExp(dbapp_ob->dbexp1_);
@@ -180,7 +183,7 @@ void freeDBApp(DBApp *dbapp_ob){
 }
 
 void freeLetRec(LetRec *letrec_ob){
-#ifdef DEBUG
+#ifdef DBG_FREE
     printf("free letrec\n");
 #endif
     freeVar(letrec_ob->fun);
@@ -191,7 +194,7 @@ void freeLetRec(LetRec *letrec_ob){
 }
 
 void freeDBLetRec(DBLetRec *dbletrec_ob){
-#ifdef DEBUG
+#ifdef DBG_FREE
     printf("free dbletrec\n");
 #endif
     freeDBExp(dbletrec_ob->dbexp1_);
@@ -200,7 +203,7 @@ void freeDBLetRec(DBLetRec *dbletrec_ob){
 }
 
 void freeExp(Exp *exp_ob){
-#ifdef DEBUG
+#ifdef DBG_FREE
     printf("free exp\n");
 #endif
     if(exp_ob->exp_type==INT)freeInt(exp_ob->u.int_);
@@ -217,7 +220,7 @@ void freeExp(Exp *exp_ob){
 }
 
 void freeDBExp(DBExp *dbexp_ob){
-#ifdef DEBUG
+#ifdef DBG_FREE
     printf("free dbexp\n");
 #endif
     if(dbexp_ob->exp_type==INT)freeInt(dbexp_ob->u.int_);
@@ -235,7 +238,7 @@ void freeDBExp(DBExp *dbexp_ob){
 
 void freeAsmp(Asmp *asmp_ob){
     if(asmp_ob==NULL)return;
-#ifdef DEBUG
+#ifdef DBG_FREE
     printf("free asmp\n");
 #endif
     freeCncl(asmp_ob->cncl_);
@@ -245,7 +248,7 @@ void freeAsmp(Asmp *asmp_ob){
 }
 
 void freeCncl(Cncl *cncl_ob){
-#ifdef DEBUG
+#ifdef DBG_FREE
     printf("free cncl\n");
 #endif
     freeAsmp(cncl_ob->asmp_);

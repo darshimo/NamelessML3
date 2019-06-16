@@ -3,7 +3,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-//#define DEBUG
+#ifdef DBG_ALL
+#define DBG_DRV
+#endif
 
 VarList *copyVarList(VarList *);
 
@@ -14,7 +16,7 @@ Var *copyVar(Var *);
 DBExp *copyDBExp(DBExp *);
 int cmpVar(Var *, Var *);
 
-#ifdef DEBUG
+#ifdef DBG_DRV
 void writeVarList(VarList *);
 void writeInt(Int *);
 void writeBool(Bool *);
@@ -29,7 +31,7 @@ void derivation(Cncl *, int);
 
 
 void Tr_Int(Cncl *cncl_ob, int d){
-#ifdef DEBUG
+#ifdef DBG_DRV
     ind(d);
     printf("Tr-Int: ");
     writeVarList(cncl_ob->varlist_);
@@ -53,7 +55,7 @@ void Tr_Int(Cncl *cncl_ob, int d){
 }
 
 void Tr_Bool(Cncl *cncl_ob, int d){
-#ifdef DEBUG
+#ifdef DBG_DRV
     ind(d);
     printf("Tr-Bool: ");
     writeVarList(cncl_ob->varlist_);
@@ -77,7 +79,7 @@ void Tr_Bool(Cncl *cncl_ob, int d){
 }
 
 void Tr_Var(Cncl *cncl_ob, int d){
-#ifdef DEBUG
+#ifdef DBG_DRV
     ind(d);
     printf("Tr-Var: ");
     writeVarList(cncl_ob->varlist_);
@@ -120,7 +122,7 @@ void Tr_Var(Cncl *cncl_ob, int d){
 }
 
 void Tr_Op(Cncl *cncl_ob, int d){
-#ifdef DEBUG
+#ifdef DBG_DRV
     ind(d);
     printf("Tr-Op: ");
     writeVarList(cncl_ob->varlist_);
@@ -163,7 +165,7 @@ void Tr_Op(Cncl *cncl_ob, int d){
 }
 
 void Tr_If(Cncl *cncl_ob, int d){
-#ifdef DEBUG
+#ifdef DBG_DRV
     ind(d);
     printf("Tr-If: ");
     writeVarList(cncl_ob->varlist_);
@@ -208,7 +210,7 @@ void Tr_If(Cncl *cncl_ob, int d){
 }
 
 void Tr_Let(Cncl *cncl_ob, int d){
-#ifdef DEBUG
+#ifdef DBG_DRV
     ind(d);
     printf("Tr-Let: ");
     writeVarList(cncl_ob->varlist_);
@@ -249,7 +251,7 @@ void Tr_Let(Cncl *cncl_ob, int d){
 }
 
 void Tr_Fun(Cncl *cncl_ob, int d){
-#ifdef DEBUG
+#ifdef DBG_DRV
     ind(d);
     printf("Tr-Fun: ");
     writeVarList(cncl_ob->varlist_);
@@ -283,7 +285,7 @@ void Tr_Fun(Cncl *cncl_ob, int d){
 }
 
 void Tr_App(Cncl *cncl_ob, int d){
-#ifdef DEBUG
+#ifdef DBG_DRV
     ind(d);
     printf("Tr-App: ");
     writeVarList(cncl_ob->varlist_);
@@ -321,7 +323,7 @@ void Tr_App(Cncl *cncl_ob, int d){
 }
 
 void Tr_LetRec(Cncl *cncl_ob, int d){
-#ifdef DEBUG
+#ifdef DBG_DRV
     ind(d);
     printf("Tr-LetRec: ");
     writeVarList(cncl_ob->varlist_);
